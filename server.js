@@ -25,18 +25,17 @@ var server = app.listen(port, function () {
 	console.log("Listening: " + server.address().port);
 	
 	console.log(process.env.DATABASE_URL);
-	
-/*	
+
 pool.query('SELECT table_name FROM information_schema.tables WHERE table_schema=\'public\'', function(err, result) {
 				console.log(result);
 			});
-*/
+
 
 	
 });
 
 app.get('/', function (req, res) {
-   res.send('Hello World');
+   res.send(process.env.DATABASE_URL);
 })
 
 
