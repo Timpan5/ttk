@@ -9,6 +9,7 @@ var cheerio = require("cheerio");
 var cheerioTableparser = require('cheerio-tableparser');
 var rr = require("request");
 
+
 //Connect to PSQL database and establish client pool
 const Pool = require('pg-pool');
 var pgConfig = process.env.DATABASE_URL.split(":");
@@ -24,48 +25,22 @@ var pool = new Pool(config);
 
 var app = express();
 
+app.use(express.static("/"));
+
 var port = process.env.PORT || 5000;
 var server = app.listen(port, function () {
 	console.log("Listening: " + server.address().port);
 
-	var myVar = setInterval(function() {
-		rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Bestiary&limit=999'}, function (error, res, body) {
-			if (!error && res.statusCode == 200) {
-				
-				var base = JSON.parse(body).basepath;
-				for (i = 0; i < (JSON.parse(body).items).length; i++) {
-					var page = base + (JSON.parse(body).items)[i]["url"];
-					var id = (JSON.parse(body).items)[i]["id"];
-					var title = (JSON.parse(body).items)[i]["title"];
-					
-					getNpcStats(id, title, page);
 
-				}
-			}
-		});
-	}, 150000);
-	/*
-	rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Bestiary&limit=5'}, function (error, res, body) {
-		if (!error && res.statusCode == 200) {
-			
-			var base = JSON.parse(body).basepath;
-			for (i = 0; i < (JSON.parse(body).items).length; i++) {
-				var page = base + (JSON.parse(body).items)[i]["url"];
-				var id = (JSON.parse(body).items)[i]["id"];
-				var title = (JSON.parse(body).items)[i]["title"];
-				
-				getNpcStats(id, title, page);
 
-			}
-		}
-	});
-	*/
 	
 });
+
 
 app.get('/', function (req, res) {
    res.send(process.env.DATABASE_URL);
 })
+
 
 
 function getNpcStats(id, title, page) {
@@ -238,4 +213,23 @@ function getStats(id, title, page) {
 			}
 		}
 	});
+	*/
+
+	/*
+		var myVar = setInterval(function() {
+		rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Bestiary&limit=999'}, function (error, res, body) {
+			if (!error && res.statusCode == 200) {
+				
+				var base = JSON.parse(body).basepath;
+				for (i = 0; i < (JSON.parse(body).items).length; i++) {
+					var page = base + (JSON.parse(body).items)[i]["url"];
+					var id = (JSON.parse(body).items)[i]["id"];
+					var title = (JSON.parse(body).items)[i]["title"];
+					
+					getNpcStats(id, title, page);
+
+				}
+			}
+		});
+	}, 150000);
 	*/
