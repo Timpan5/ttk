@@ -25,21 +25,41 @@ var pool = new Pool(config);
 
 var app = express();
 
-app.use(express.static("/"));
+app.use(express.static(path.join(__dirname, "public")));
 
 var port = process.env.PORT || 5000;
 var server = app.listen(port, function () {
 	console.log("Listening: " + server.address().port);
+});
 
+app.get("/wepList", function (req, res) {
+	console.log("IN : wepList");
 
-
+	pool.query("SELECT name FROM weapons_melee ORDER BY name ASC", function(err, result) {
+		var jsonObj = {"data" : result.rows};
+		res.send(jsonObj);
+	});
 	
 });
 
+app.get("/stats/wep/*", function (req, res) {
+	console.log(req.path.substr(11));
+	var jsonObj = {"data" : "10"};
+	res.send(jsonObj);
+});
 
+/*
+app.get("*", function(req, res) {
+	console.log(req.path);
+});
+*/
+
+
+/*
 app.get('/', function (req, res) {
    res.send(process.env.DATABASE_URL);
 })
+*/
 
 
 
@@ -49,7 +69,7 @@ function getNpcStats(id, title, page) {
 			$ = cheerio.load(body);
 
 			$("table table").each(function() {
-				var row = $('tr', this).text();
+				var row = $("tr", this).text();
 				
 				if (row.indexOf("Combat info") != -1) {
 					
