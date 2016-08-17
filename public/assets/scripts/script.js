@@ -29,16 +29,27 @@ function loadInputList() {
 function getOffenseTotal() {
 	var $wName = $("#wName");
 	
-	var url = "stats\/wep\/" + $wName.val();
+	//Check for other characters in names
+	if (/[^a-z\s\d]/gi.test($wName.val()))
+		return;
+	
+	var url = "stats\/wep\/melee";
 	
 	$.ajax({
 		url: url,
-		method: "GET",
+		method: "POST",
+		data: {"name" : $wName.val()},
 		dataType: "json"
 	})
 	.done(function(jsondata){
 		var data = jsondata.data;
-		//alert(data);
+		
+		if (!data.length)
+			alert("Not found");
+		
+		else {
+			alert(JSON.stringify(data));
+		}
 	})
 	.fail(function(jqXHR, textStatus, errorThrown){
         alert( "Request failed: " + errorThrown );

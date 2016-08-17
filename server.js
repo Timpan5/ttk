@@ -1,14 +1,14 @@
-var http = require('http');
+var http = require("http");
 var https = require("https");
-var fs = require('fs');
-var url = require('url');
-var express = require('express');
-var path = require('path');
-var pg = require('pg');
+var fs = require("fs");
+var url = require("url");
+var express = require("express");
+var bodyParser = require("body-parser");
+var path = require("path");
+var pg = require("pg");
 var cheerio = require("cheerio");
 var cheerioTableparser = require('cheerio-tableparser');
 var rr = require("request");
-
 
 //Connect to PSQL database and establish client pool
 const Pool = require('pg-pool');
@@ -24,6 +24,11 @@ const config = {
 var pool = new Pool(config);
 
 var app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+	extended: true
+})); 
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -42,10 +47,23 @@ app.get("/wepList", function (req, res) {
 	
 });
 
-app.get("/stats/wep/*", function (req, res) {
-	console.log(req.path.substr(11));
-	var jsonObj = {"data" : "10"};
-	res.send(jsonObj);
+app.post("/stats/wep/melee", function (req, res) {
+	
+	var name = req.body.name;
+	
+	console.log("IN : mWep - " + name);
+	
+	if (/[^a-z\s\d]/gi.test(name)) {
+		res.status(400).json({error:"Invalid item name"});
+	}
+	
+	else {
+		pool.query("SELECT * FROM weapons_melee WHERE name=$1", [name], function(err, result) {
+			var jsonObj = {"data" : result.rows};
+			res.send(jsonObj);
+		});
+	}
+	
 });
 
 /*
