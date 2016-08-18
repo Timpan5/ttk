@@ -29,10 +29,6 @@ function loadInputList() {
 function getOffenseTotal() {
 	var $wName = $("#wName");
 	
-	//Check for other characters in names
-	if (/[^a-z\s\d]/gi.test($wName.val()))
-		return;
-	
 	var url = "stats\/wep\/melee";
 	
 	$.ajax({
@@ -42,17 +38,21 @@ function getOffenseTotal() {
 		dataType: "json"
 	})
 	.done(function(jsondata){
-		var data = jsondata.data;
+		var data = jsondata.data[0];
 		
-		if (!data.length)
-			alert("Not found");
+
+		alert(data.id);
+		//alert(JSON.stringify(data));
+		//var name = data.name;
+		//var stats = data.stats;
+		//var speed = data.speed;
 		
-		else {
-			alert(JSON.stringify(data));
-		}
+		//alert(name + " " + stats + " " + speed);
+			
+		
 	})
 	.fail(function(jqXHR, textStatus, errorThrown){
-        alert( "Request failed: " + errorThrown );
+        alert("Request failed: " + errorThrown);
     });
 	
 	//alert(url);

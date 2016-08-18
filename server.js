@@ -53,14 +53,21 @@ app.post("/stats/wep/melee", function (req, res) {
 	
 	console.log("IN : mWep - " + name);
 	
+	//Test validity
 	if (/[^a-z\s\d]/gi.test(name)) {
-		res.status(400).json({error:"Invalid item name"});
+		res.status(400).send("Invalid item name");
 	}
 	
 	else {
 		pool.query("SELECT * FROM weapons_melee WHERE name=$1", [name], function(err, result) {
 			var jsonObj = {"data" : result.rows};
-			res.send(jsonObj);
+			if (!result.rows.length) {
+				res.statusMessage = "Item not found";
+				res.status(400).end();
+			}
+			else {
+				res.send(jsonObj);
+			}
 		});
 	}
 	
