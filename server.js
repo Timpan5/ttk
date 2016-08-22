@@ -24,12 +24,10 @@ const config = {
 var pool = new Pool(config);
 
 var app = express();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: true
 })); 
-
 app.use(express.static(path.join(__dirname, "public")));
 
 var port = process.env.PORT || 5000;
@@ -47,19 +45,30 @@ app.get("/wepList", function (req, res) {
 	
 });
 
+const dbQuery = {
+	"wepMelee" : "SELECT * FROM weapons_melee WHERE name=$1",
+};
+
 app.post("/stats/wep/melee", function (req, res) {
-	
+	sendStats(req, res, dbQuery.wepMelee);
+});
+
+/*
+app.get("*", function(req, res) {
+	console.log(req.path);
+});
+*/
+
+function sendStats(req, res, query) {
 	var name = req.body.name;
+	console.log("Seeking: " + name);
 	
-	console.log("IN : mWep - " + name);
-	
-	//Test validity
 	if (/[^a-z\s\d]/gi.test(name)) {
 		res.status(400).send("Invalid item name");
 	}
 	
 	else {
-		pool.query("SELECT * FROM weapons_melee WHERE name=$1", [name], function(err, result) {
+		pool.query(query, [name], function(err, result) {
 			var jsonObj = {"data" : result.rows};
 			if (!result.rows.length) {
 				res.statusMessage = "Item not found";
@@ -70,23 +79,7 @@ app.post("/stats/wep/melee", function (req, res) {
 			}
 		});
 	}
-	
-});
-
-/*
-app.get("*", function(req, res) {
-	console.log(req.path);
-});
-*/
-
-
-/*
-app.get('/', function (req, res) {
-   res.send(process.env.DATABASE_URL);
-})
-*/
-
-
+}
 
 function getNpcStats(id, title, page) {
 	rr({url : page}, function (error, res, body) {
