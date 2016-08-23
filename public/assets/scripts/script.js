@@ -1,14 +1,22 @@
+//Datalist constants
+const dbList = [
+	["wList", "wepList"],
+	["hList", "headList"],
+];
+
 function loadInputList() {
-	var $input = $("<input>");
-	$input.attr({"id":"wName", "list":"wList"});
-	$("body").append($input);
-	
+	dbList.forEach(function(item){
+		loadDatalist(item[0], item[1]);
+	});
+}
+
+function loadDatalist(listName, url) {
 	var $datalist = $("<datalist>");
-	$datalist.attr("id", "wList");
+	$datalist.attr("id", listName);
 	$("body").append($datalist);
 	
 	$.ajax({
-        url: "wepList",
+        url: url, 
         method: "GET",
         dataType: "json"
     })
@@ -26,37 +34,11 @@ function loadInputList() {
     });
 }
 
-function getOffenseTotal() {
-	var $wName = $("#wName");
-	
-	var url = "stats\/wep\/melee";
-	
-	$.ajax({
-		url: url,
-		method: "POST",
-		data: {"name" : $wName.val()},
-		dataType: "json"
-	})
-	.done(function(jsondata){
-		var data = jsondata.data[0];
-		
-		var name = data.name;
-		var stats = data.stats;
-		var speed = data.speed;
-		
-		alert(name + " " + stats + " " + speed);
-			
-		
-	})
-	.fail(function(jqXHR, textStatus, errorThrown){
-        alert("Request failed: " + errorThrown);
-    });
-	
-	//alert(url);
-}
+
 
 const dbURL = {
 	"wepMelee" : "stats\/wep\/melee",
+	"head" : "stats\/armor\/head",
 };
 
 //use $target.change() to trigger manually
@@ -64,6 +46,10 @@ $(function() {
 	
 	$("#wep").find(".name").change(function() {
 		ajaxStats($("#wep"), dbURL.wepMelee);
+	}); 
+	
+	$("#head").find(".name").change(function() {
+		ajaxStats($("#head"), dbURL.head);
 	}); 
 	
 });
@@ -96,3 +82,4 @@ function ajaxStats($piece, url) {
 		alert("Request failed: " + errorThrown);
 	});
 }
+

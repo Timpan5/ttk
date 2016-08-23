@@ -35,22 +35,26 @@ var server = app.listen(port, function () {
 	console.log("Listening: " + server.address().port);
 });
 
-app.get("/wepList", function (req, res) {
-	console.log("IN : wepList");
-
-	pool.query("SELECT name FROM weapons_melee ORDER BY name ASC", function(err, result) {
-		var jsonObj = {"data" : result.rows};
-		res.send(jsonObj);
-	});
-	
-});
-
-const dbQuery = {
-	"wepMelee" : "SELECT * FROM weapons_melee WHERE name=$1",
+//Names of tables holding items in PSQL database
+const dbTableName = {
+	"wepMelee" : "weapons_melee",
+	"head" : "head",
 };
 
+app.get("/wepList", function (req, res) {
+	sendList(res, getListQuery(dbTableName.wepMelee));
+});
+
+app.get("/headList", function (req, res) {
+	sendList(res, getListQuery(dbTableName.head));
+});
+
 app.post("/stats/wep/melee", function (req, res) {
-	sendStats(req, res, dbQuery.wepMelee);
+	sendStats(req, res, getItemQuery(dbTableName.wepMelee));
+});
+
+app.post("/stats/armor/head", function (req, res) {
+	sendStats(req, res, getItemQuery(dbTableName.head));
 });
 
 /*
@@ -58,6 +62,21 @@ app.get("*", function(req, res) {
 	console.log(req.path);
 });
 */
+
+function getItemQuery(tableName) {
+	return "SELECT * FROM " + tableName + " WHERE name=$1";
+}
+
+function getListQuery(tableName) {
+	return "SELECT name FROM " + tableName + " ORDER BY name ASC";
+}
+
+function sendList(res, query) {
+	pool.query(query, function(err, result) {
+		var jsonObj = {"data" : result.rows};
+		res.send(jsonObj);
+	});
+}
 
 function sendStats(req, res, query) {
 	var name = req.body.name;
