@@ -1,21 +1,19 @@
 //Datalist constants
-//Section id, list id, server url
+//Section id, list id, server url, dbURL
 const slotNames = [
-	["W", "wep", "wList", "wepList"],
-	["H", "head", "hList", "headList"],
+	["W", "wep", "wList", "wepList", "stats\/wep\/melee"],
+	["H", "head", "hList", "headList", "stats\/armor\/head"],
 ];
 
 function loadEquipmentSlots() {
 	slotNames.forEach(function(item){
-		makeSlot(item[0], item[1], item[2]);
+		makeSlot(item[0], item[1], item[2], item[4]);
 		loadDatalist(item[2], item[3]);
 	});
-	detectItem();
 }
 
-function makeSlot(symbol, shortName, datalist) {
+function makeSlot(symbol, shortName, datalist, url) {
 	var $tr = $("<tr>").attr("id", shortName);
-	
 	var $symbol = $("<td>").html(symbol);
 	var $name = $("<td>").append($("<input>").attr({"class" : "name", "list" : datalist}));
 	var $ticks = $("<td>").append($("<input>").addClass("ticks"));
@@ -27,10 +25,16 @@ function makeSlot(symbol, shortName, datalist) {
 	var $cr = $("<td>").append($("<input>").addClass("cr"));
 	var $ma = $("<td>").append($("<input>").addClass("ma"));
 	var $ra = $("<td>").append($("<input>").addClass("ra"));
+
+	$name.find(".name").change(function() {
+		ajaxStats($tr, url);
+	}); 
 	
 	$tr.append($symbol, $name, $ticks, $str, $r, $m, $st, $sl, $cr, $ma, $ra);
 	$("#equipment").append($tr); //hardcoded table id
 }
+
+
 
 function loadDatalist(listName, url) {
 	var $datalist = $("<datalist>");
@@ -55,25 +59,6 @@ function loadDatalist(listName, url) {
         alert( "Request failed: " + errorThrown );
     });
 }
-
-
-
-const dbURL = {
-	"wepMelee" : "stats\/wep\/melee",
-	"head" : "stats\/armor\/head",
-};
-
-//use $target.change() to trigger manually
-function detectItem() {
-	
-	$("#wep").find(".name").change(function() {
-		ajaxStats($("#wep"), dbURL.wepMelee);
-	}); 
-	
-	$("#head").find(".name").change(function() {
-		ajaxStats($("#head"), dbURL.head);
-	}); 
-};
 
 function ajaxStats($piece, url) {
 	var load = {"name" : $piece.find(".name").val()};
