@@ -82,7 +82,7 @@ function sendStats(req, res, query) {
 	var name = req.body.name;
 	console.log("Seeking: " + name);
 	
-	if (/[^a-z\s\d]/gi.test(name)) {
+	if (/[^a-z\s\d\(\)]/gi.test(name)) { 
 		res.status(400).send("Invalid item name");
 	}
 	

@@ -1,13 +1,35 @@
 //Datalist constants
-const dbList = [
-	["wList", "wepList"],
-	["hList", "headList"],
+//Section id, list id, server url
+const slotNames = [
+	["W", "wep", "wList", "wepList"],
+	["H", "head", "hList", "headList"],
 ];
 
-function loadInputList() {
-	dbList.forEach(function(item){
-		loadDatalist(item[0], item[1]);
+function loadEquipmentSlots() {
+	slotNames.forEach(function(item){
+		makeSlot(item[0], item[1], item[2]);
+		loadDatalist(item[2], item[3]);
 	});
+	detectItem();
+}
+
+function makeSlot(symbol, shortName, datalist) {
+	var $tr = $("<tr>").attr("id", shortName);
+	
+	var $symbol = $("<td>").html(symbol);
+	var $name = $("<td>").append($("<input>").attr({"class" : "name", "list" : datalist}));
+	var $ticks = $("<td>").append($("<input>").addClass("ticks"));
+	var $str = $("<td>").append($("<input>").addClass("str"));
+	var $r = $("<td>").append($("<input>").addClass("r"));
+	var $m = $("<td>").append($("<input>").addClass("m"));
+	var $st = $("<td>").append($("<input>").addClass("st"));
+	var $sl = $("<td>").append($("<input>").addClass("sl"));
+	var $cr = $("<td>").append($("<input>").addClass("cr"));
+	var $ma = $("<td>").append($("<input>").addClass("ma"));
+	var $ra = $("<td>").append($("<input>").addClass("ra"));
+	
+	$tr.append($symbol, $name, $ticks, $str, $r, $m, $st, $sl, $cr, $ma, $ra);
+	$("#equipment").append($tr); //hardcoded table id
 }
 
 function loadDatalist(listName, url) {
@@ -42,7 +64,7 @@ const dbURL = {
 };
 
 //use $target.change() to trigger manually
-$(function() {
+function detectItem() {
 	
 	$("#wep").find(".name").change(function() {
 		ajaxStats($("#wep"), dbURL.wepMelee);
@@ -51,8 +73,7 @@ $(function() {
 	$("#head").find(".name").change(function() {
 		ajaxStats($("#head"), dbURL.head);
 	}); 
-	
-});
+};
 
 function ajaxStats($piece, url) {
 	var load = {"name" : $piece.find(".name").val()};
