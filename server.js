@@ -39,14 +39,29 @@ var server = app.listen(port, function () {
 const dbTableName = {
 	"wepMelee" : "weapons_melee",
 	"head" : "head",
+	"cape" : "cape",
+	"neck" : "neck",
+	"ammo" : "ammo",
+	"chest" : "chest",
+	"shield" : "shield",
+	"legs" : "legs",
+	"hands" : "hands",
+	"feet" : "feet",
+	"ring" : "ring",
 };
 
-app.get("/wepList", function (req, res) {
-	sendList(res, getListQuery(dbTableName.wepMelee));
-});
-
-app.get("/headList", function (req, res) {
-	sendList(res, getListQuery(dbTableName.head));
+app.get(/(List)/, function (req, res) { 
+	var base = req.path;
+	var end = base.indexOf("List");
+	if (end > 0) {
+		var target = base.substring(1,end);
+		console.log(target);
+		sendList(res, getListQuery(dbTableName[target]));
+	}
+	else {
+		console.log("List failed");
+		res.status(400).send("List failed");
+	}	
 });
 
 app.post("/stats/wep/melee", function (req, res) {
@@ -57,11 +72,24 @@ app.post("/stats/armor/head", function (req, res) {
 	sendStats(req, res, getItemQuery(dbTableName.head));
 });
 
-/*
-app.get("*", function(req, res) {
-	console.log(req.path);
+app.post("/stats/armor/cape", function (req, res) {
+	sendStats(req, res, getItemQuery(dbTableName.cape));
 });
-*/
+
+app.post("/stats/armor/neck", function (req, res) {
+	sendStats(req, res, getItemQuery(dbTableName.neck));
+});
+
+app.post("/stats/wep/ammo", function (req, res) {
+	sendStats(req, res, getItemQuery(dbTableName.ammo));
+});
+
+
+app.get("*", function(req, res) {
+	console.log("*: " + req.path);
+});
+
+
 
 function getItemQuery(tableName) {
 	return "SELECT * FROM " + tableName + " WHERE name=$1";

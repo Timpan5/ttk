@@ -1,8 +1,17 @@
 //Datalist constants
 //Section id, list id, server url, dbURL
 const slotNames = [
-	["W", "wep", "wList", "wepList", "stats\/wep\/melee"],
+	["W", "wep", "wList", "wepMeleeList", "stats\/wep\/melee"],
 	["H", "head", "hList", "headList", "stats\/armor\/head"],
+	["C", "cape", "cList", "capeList", "stats\/armor\/cape"],
+	["N", "neck", "nList", "neckList", "stats\/armor\/neck"],
+	["A", "ammo", "aList", "ammoList", "stats\/wep\/ammo"],
+	["Ch", "chest", "chList", "chestList", "stats\/armor\/chest"],
+	["S", "shield", "sList", "shieldList", "stats\/armor\/shield"],
+	["L", "legs", "lList", "legsList", "stats\/armor\/legs"],
+	["Ha", "hands", "haList", "handsList", "stats\/armor\/hands"],
+	["F", "feet", "fList", "feetList", "stats\/armor\/feet"],
+	["R", "ring", "rList", "ringList", "stats\/armor\/ring"],
 ];
 
 function loadEquipmentSlots() {
@@ -33,8 +42,6 @@ function makeSlot(symbol, shortName, datalist, url) {
 	$tr.append($symbol, $name, $ticks, $str, $r, $m, $st, $sl, $cr, $ma, $ra);
 	$("#equipment").append($tr); //hardcoded table id
 }
-
-
 
 function loadDatalist(listName, url) {
 	var $datalist = $("<datalist>");
@@ -88,4 +95,3 @@ function ajaxStats($piece, url) {
 		alert("Request failed: " + errorThrown);
 	});
 }
-
