@@ -52,38 +52,24 @@ const dbTableName = {
 
 app.get(/(List)/, function (req, res) { 
 	var base = req.path;
+	var item = base.split("\/");
 	var end = base.indexOf("List");
-	if (end > 0) {
+	
+	if (end > 0 && item.length == 2) {
 		var target = base.substring(1,end);
-		console.log(target);
 		sendList(res, getListQuery(dbTableName[target]));
+	}
+	else if (end > 0 && item.length == 3) {
+		var target = base.substring(1,end);
+		var name = decodeURIComponent(item[2]);
+		sendStats(name, res, getItemQuery(dbTableName[target]));
 	}
 	else {
 		console.log("List failed");
 		res.status(400).send("List failed");
 	}	
-});
 
-app.post("/stats/wep/melee", function (req, res) {
-	sendStats(req, res, getItemQuery(dbTableName.wepMelee));
 });
-
-app.post("/stats/armor/head", function (req, res) {
-	sendStats(req, res, getItemQuery(dbTableName.head));
-});
-
-app.post("/stats/armor/cape", function (req, res) {
-	sendStats(req, res, getItemQuery(dbTableName.cape));
-});
-
-app.post("/stats/armor/neck", function (req, res) {
-	sendStats(req, res, getItemQuery(dbTableName.neck));
-});
-
-app.post("/stats/wep/ammo", function (req, res) {
-	sendStats(req, res, getItemQuery(dbTableName.ammo));
-});
-
 
 app.get("*", function(req, res) {
 	console.log("*: " + req.path);
@@ -106,11 +92,8 @@ function sendList(res, query) {
 	});
 }
 
-function sendStats(req, res, query) {
-	var name = req.body.name;
-	console.log("Seeking: " + name);
-	
-	if (/[^a-z\s\d\(\)]/gi.test(name)) { 
+function sendStats(name, res, query) {
+	if (/[^a-z\s\d\(\)']/gi.test(name)) { 
 		res.status(400).send("Invalid item name");
 	}
 	

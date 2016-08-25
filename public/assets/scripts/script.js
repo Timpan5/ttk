@@ -16,7 +16,7 @@ const slotNames = [
 
 function loadEquipmentSlots() {
 	slotNames.forEach(function(item){
-		makeSlot(item[0], item[1], item[2], item[4]);
+		makeSlot(item[0], item[1], item[2], item[3]);
 		loadDatalist(item[2], item[3]);
 	});
 }
@@ -68,11 +68,10 @@ function loadDatalist(listName, url) {
 }
 
 function ajaxStats($piece, url) {
-	var load = {"name" : $piece.find(".name").val()};
+	var find = url + "\/" + $piece.find(".name").val();
 	$.ajax({
-		url: url,
-		method: "POST",
-		data: load,
+		url: find,
+		method: "GET",
 		dataType: "json"
 	})
 	.done(function(jsondata){
