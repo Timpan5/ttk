@@ -11,6 +11,7 @@ var cheerioTableparser = require('cheerio-tableparser');
 var rr = require("request");
 
 //Connect to PSQL database and establish client pool
+//URL gets reset when powershell closes
 const Pool = require('pg-pool');
 var pgConfig = process.env.DATABASE_URL.split(":");
 const config = {

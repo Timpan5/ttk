@@ -19,6 +19,7 @@ function loadEquipmentSlots() {
 		makeSlot(item[0], item[1], item[2], item[3]);
 		loadDatalist(item[2], item[3]);
 	});
+	makeTotal();
 }
 
 function makeSlot(symbol, shortName, datalist, url) {
@@ -41,6 +42,54 @@ function makeSlot(symbol, shortName, datalist, url) {
 	
 	$tr.append($symbol, $name, $ticks, $str, $r, $m, $st, $sl, $cr, $ma, $ra);
 	$("#equipment").append($tr); //hardcoded table id
+}
+
+function makeTotal() {
+	var $tr = $("<tr>").attr("id", "total");
+	var $symbol = $("<td>").html("");
+	var $name = $("<td>").html("<b>Total</b>");
+	var $ticks = $("<td>").append($("<input>").addClass("ticks"));
+	var $str = $("<td>").append($("<input>").addClass("str"));
+	var $r = $("<td>").append($("<input>").addClass("r"));
+	var $m = $("<td>").append($("<input>").addClass("m"));
+	var $st = $("<td>").append($("<input>").addClass("st"));
+	var $sl = $("<td>").append($("<input>").addClass("sl"));
+	var $cr = $("<td>").append($("<input>").addClass("cr"));
+	var $ma = $("<td>").append($("<input>").addClass("ma"));
+	var $ra = $("<td>").append($("<input>").addClass("ra"));
+	
+	$tr.append($symbol, $name, $ticks, $str, $r, $m, $st, $sl, $cr, $ma, $ra);
+	$("#equipment").append($tr); //hardcoded table id
+	
+	updateTotal();
+}
+
+function updateTotal() {
+	$("#wep").find(".ticks").change(function() {
+		$("#total").find(".ticks").val($("#wep").find(".ticks").val());
+	}); 
+
+	$(".str").each(function(index){
+		if ($(this).parent().attr("id") != "total") {
+			$(this).change(function() {
+				sumStatTotal(".str");
+			});
+		}
+	});
+
+}
+
+function sumStatTotal(statClass) {
+	var sum = 0;
+	
+	var fields = $(statClass);	
+	for(var i = 0; i < fields.length - 1; i++){
+		if (fields[i].value != "") {
+			sum += parseInt(fields[i].value);
+		}
+	}
+
+	$("#total").find(statClass).val(sum);
 }
 
 function loadDatalist(listName, url) {
