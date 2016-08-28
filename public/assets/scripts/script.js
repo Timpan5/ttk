@@ -64,31 +64,45 @@ function makeTotal() {
 	updateTotal();
 }
 
+const sumSlots = [
+	".str",
+	".r",
+	".st",
+	".sl",
+	".cr",
+	".ma",
+	".ra"
+];
+
 function updateTotal() {
 	$("#wep").find(".ticks").change(function() {
 		$("#total").find(".ticks").val($("#wep").find(".ticks").val());
 	}); 
 
-	$(".str").each(function(index){
+	for (var i = 0; i < sumSlots.length; i++) {
+		setChangeFn(sumSlots[i]);
+	}
+
+}
+
+function setChangeFn(slot) {
+	$(slot).each(function(){
 		if ($(this).parent().attr("id") != "total") {
 			$(this).change(function() {
-				sumStatTotal(".str");
+				sumStatTotal(slot);
 			});
 		}
 	});
-
 }
 
 function sumStatTotal(statClass) {
 	var sum = 0;
-	
 	var fields = $(statClass);	
 	for(var i = 0; i < fields.length - 1; i++){
 		if (fields[i].value != "") {
 			sum += parseInt(fields[i].value);
 		}
 	}
-
 	$("#total").find(statClass).val(sum);
 }
 
