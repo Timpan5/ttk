@@ -95,6 +95,16 @@ function setChangeFn(slot) {
 	});
 }
 
+function calculateAllTotals() {
+	for (var i = 0; i < sumSlots.length; i++) {
+		sumStatTotal(sumSlots[i]);
+	}
+	
+	if ($("#wep").find(".ticks").val() != "") {
+		$("#total").find(".ticks").val($("#wep").find(".ticks").val());
+	}
+}
+
 function sumStatTotal(statClass) {
 	var sum = 0;
 	var fields = $(statClass);	
@@ -131,29 +141,45 @@ function loadDatalist(listName, url) {
 }
 
 function ajaxStats($piece, url) {
-	var find = url + "\/" + $piece.find(".name").val();
-	$.ajax({
-		url: find,
-		method: "GET",
-		dataType: "json"
-	})
-	.done(function(jsondata){
-		var data = jsondata.data[0];
-		var speed = data.speed;
-		var ticks = 10 - speed;
-		var stats = data.stats;
-		
-		$piece.find(".ticks").val(ticks);
-		$piece.find(".str").val(stats[10]);
-		$piece.find(".r").val(stats[11]);
-		$piece.find(".m").val(stats[12]);
-		$piece.find(".st").val(stats[0]);
-		$piece.find(".sl").val(stats[1]);
-		$piece.find(".cr").val(stats[2]);
-		$piece.find(".ma").val(stats[3]);
-		$piece.find(".ra").val(stats[4]);
-	})
-	.fail(function(jqXHR, textStatus, errorThrown){
-		alert("Request failed: " + errorThrown);
-	});
+	if ($piece.find(".name").val() != "") {
+		var find = url + "\/" + $piece.find(".name").val();
+		$.ajax({
+			url: find,
+			method: "GET",
+			dataType: "json"
+		})
+		.done(function(jsondata){
+			var data = jsondata.data[0];
+			var speed = data.speed;
+			var ticks = 10 - speed;
+			var stats = data.stats;
+			
+			$piece.find(".ticks").val(ticks);
+			$piece.find(".str").val(stats[10]);
+			$piece.find(".r").val(stats[11]);
+			$piece.find(".m").val(stats[12]);
+			$piece.find(".st").val(stats[0]);
+			$piece.find(".sl").val(stats[1]);
+			$piece.find(".cr").val(stats[2]);
+			$piece.find(".ma").val(stats[3]);
+			$piece.find(".ra").val(stats[4]);
+			
+			calculateAllTotals();
+		})
+		.fail(function(jqXHR, textStatus, errorThrown){
+			alert("Request failed: " + errorThrown);
+		});
+	}
+}
+
+function pickMelee() {
+	alert("Melee");
+}
+
+function pickRange() {
+	alert("Range");
+}
+
+function pickMagic() {
+	alert("Magic");
 }
