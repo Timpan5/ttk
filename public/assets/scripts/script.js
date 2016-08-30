@@ -185,10 +185,10 @@ function pickMelee() {
 	
 	var $span1 = $("<span>").html("Atk: ");
 	var $atk = $("<input>").attr("id", "baseAtk");
-	var $potAtk = $('<input id="potAtk" list="potA" />');
+	var $potAtk = $('<input id="potAtk" list="potA" size="30" />');
 	var $span2 = $("<span>").html("Str: ");
 	var $str = $("<input>").attr("id", "baseStr");
-	var $potStr = $('<input id="potStr" list="potS" />');
+	var $potStr = $('<input id="potStr" list="potS" size="30" />');
 	$base.append($span1, $atk, $potAtk, $("<br>"), $span2, $str, $potStr);
 	
 	var $span3 = $("<span>").html("AS");
@@ -205,8 +205,8 @@ function pickMelee() {
 	var $span7 = $("<span>").html("P");
 	var $pAccuracy = $("<datalist>").attr("id", "acc");
 	var $pStrength = $("<datalist>").attr("id", "str");
-	var $p1 = $("<input>").attr("list", "acc");
-	var $p2 = $("<input>").attr("list", "str");
+	var $p1 = $('<input id="p1" list="acc" size="40" />');
+	var $p2 = $('<input id="p2" list="str" size="40" />');
 	$("#prayer").append($span7, $("<br>"), $pAccuracy, $pStrength, $p1, $("<br>"), $p2);
 	
 	
@@ -220,12 +220,15 @@ function pickMelee() {
 		var data = jsondata.data;
 		for (i = 0; i < data.length; i++) {
 			var $option = $("<option>");
-			$option.text(data[i].name).val(data[i].name);
 			
 			if (data[i].accuracy > 1) {
+				var buff = data[i].name + " (" + data[i]["accuracy"] + ")";
+				$option.text(buff);
 				$pAccuracy.append($option.clone());
 			}
 			if (data[i].strength > 1) {
+				var buff = data[i].name + " (" + data[i]["strength"] + ")";
+				$option.text(buff);
 				$pStrength.append($option.clone());
 			}
 		}
@@ -261,7 +264,8 @@ function getPotList(potStyle, $potList) {
 		var data = jsondata.data;
 		for (i = 0; i < data.length; i++) {
 			var $option = $("<option>");
-			$option.text(data[i].name).val(data[i].name);
+			var boost = data[i].name + " (" + data[i]["percentage"] + "% + " + data[i]["static"] + ")";
+			$option.text(boost);
 			$potList.append($option);
 		}
     })
