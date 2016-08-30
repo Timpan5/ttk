@@ -69,7 +69,35 @@ app.get(/(List)/, function (req, res) {
 		console.log("List failed");
 		res.status(400).send("List failed");
 	}	
+});
 
+app.get(/(prayer)/, function (req, res) { 
+	var base = req.path;
+	var item = base.split("\/");
+	
+	if (item.length == 2) {
+		//sendlist
+	}
+	else if (item.length == 3) {
+		var name = decodeURIComponent(item[2]);
+		var query = "SELECT * FROM prayer WHERE style=$1";
+		
+		pool.query(query, [name], function(err, result) {
+			var jsonObj = {"data" : result.rows};
+			if (!result.rows.length) {
+				res.statusMessage = "Item not found";
+				res.status(400).end();
+			}
+			else {
+				res.send(jsonObj);
+			}
+		});
+		
+	}
+	else {
+		console.log("List failed");
+		res.status(400).send("List failed");
+	}	
 });
 
 app.get("*", function(req, res) {

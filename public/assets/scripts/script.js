@@ -173,13 +173,71 @@ function ajaxStats($piece, url) {
 }
 
 function pickMelee() {
-	alert("Melee");
+	emptyStyle();
+	
+	var $base = $("#baseStats");
+	var $span1 = $("<span>").html("Atk: ");
+	var $atk = $("<input>").attr("id", "baseAtk");
+	var $span2 = $("<span>").html("Str: ");
+	var $str = $("<input>").attr("id", "baseStr");
+	$base.append($span1, $atk, $("<br>"), $span2, $str);
+	
+	var $span3 = $("<span>").html("AS");
+	var $form = $("<form>");
+	var $span4 = $("<span>").html("Accurate");
+	var $radioAccurate = $('<input type="radio" name="as" id="radioAccurate" />');
+	var $span5 = $("<span>").html("Aggressive");
+	var $radioStrength = $('<input type="radio" name="as" id="radioStrength" />');
+	$form.append($span4, $radioAccurate, $span5, $radioStrength);
+	$("#attackStyle").append($span3, $form);
+	
+	var $span6 = $("<span>").html("P");
+	var $pAccuracy = $("<datalist>").attr("id", "acc");
+	var $pStrength = $("<datalist>").attr("id", "str");
+	var $p1 = $("<input>").attr("list", "acc");
+	var $p2 = $("<input>").attr("list", "str");
+	$("#prayer").append($span6, $("<br>"), $pAccuracy, $pStrength, $p1, $("<br>"), $p2);
+	
+	
+	
+	
+	var style = "melee";
+	$.ajax({
+        url: "\/prayer\/" + style, 
+        method: "GET",
+        dataType: "json"
+    })
+    .done(function(jsondata){
+		var data = jsondata.data;
+		for (i = 0; i < data.length; i++) {
+			var $option = $("<option>");
+			$option.text(data[i].name).val(data[i].name);
+			
+			if (data[i].accuracy > 1) {
+				$pAccuracy.append($option.clone());
+			}
+			if (data[i].strength > 1) {
+				$pStrength.append($option.clone());
+			}
+		}
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
+	
+	
 }
 
 function pickRange() {
-	alert("Range");
+	emptyStyle();
 }
 
 function pickMagic() {
-	alert("Magic");
+	emptyStyle();
+}
+
+function emptyStyle() {
+	$(".pick").each(function(){
+		$(this).empty();
+	});
 }
