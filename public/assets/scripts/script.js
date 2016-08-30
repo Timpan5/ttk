@@ -176,11 +176,20 @@ function pickMelee() {
 	emptyStyle();
 	
 	var $base = $("#baseStats");
+	
+	var $potA = $("<datalist>").attr("id", "potA");
+	var $potS = $("<datalist>").attr("id", "potS");
+	getPotList("attack", $potA);
+	getPotList("strength", $potS);
+	$base.append($potA, $potS);
+	
 	var $span1 = $("<span>").html("Atk: ");
 	var $atk = $("<input>").attr("id", "baseAtk");
+	var $potAtk = $('<input id="potAtk" list="potA" />');
 	var $span2 = $("<span>").html("Str: ");
 	var $str = $("<input>").attr("id", "baseStr");
-	$base.append($span1, $atk, $("<br>"), $span2, $str);
+	var $potStr = $('<input id="potStr" list="potS" />');
+	$base.append($span1, $atk, $potAtk, $("<br>"), $span2, $str, $potStr);
 	
 	var $span3 = $("<span>").html("AS");
 	var $form = $("<form>");
@@ -188,17 +197,17 @@ function pickMelee() {
 	var $radioAccurate = $('<input type="radio" name="as" id="radioAccurate" />');
 	var $span5 = $("<span>").html("Aggressive");
 	var $radioStrength = $('<input type="radio" name="as" id="radioStrength" />');
-	$form.append($span4, $radioAccurate, $span5, $radioStrength);
+	var $span6 = $("<span>").html("Controlled");
+	var $radioControlled = $('<input type="radio" name="as" id="radioControlled" />');
+	$form.append($span4, $radioAccurate, $span5, $radioStrength, $span6, $radioControlled);
 	$("#attackStyle").append($span3, $form);
 	
-	var $span6 = $("<span>").html("P");
+	var $span7 = $("<span>").html("P");
 	var $pAccuracy = $("<datalist>").attr("id", "acc");
 	var $pStrength = $("<datalist>").attr("id", "str");
 	var $p1 = $("<input>").attr("list", "acc");
 	var $p2 = $("<input>").attr("list", "str");
-	$("#prayer").append($span6, $("<br>"), $pAccuracy, $pStrength, $p1, $("<br>"), $p2);
-	
-	
+	$("#prayer").append($span7, $("<br>"), $pAccuracy, $pStrength, $p1, $("<br>"), $p2);
 	
 	
 	var style = "melee";
@@ -240,4 +249,23 @@ function emptyStyle() {
 	$(".pick").each(function(){
 		$(this).empty();
 	});
+}
+
+function getPotList(potStyle, $potList) {
+	$.ajax({
+        url: "\/potion\/" + potStyle, 
+        method: "GET",
+        dataType: "json"
+    })
+    .done(function(jsondata){
+		var data = jsondata.data;
+		for (i = 0; i < data.length; i++) {
+			var $option = $("<option>");
+			$option.text(data[i].name).val(data[i].name);
+			$potList.append($option);
+		}
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
 }
