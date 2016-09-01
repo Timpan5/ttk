@@ -199,15 +199,22 @@ function pickMelee() {
 	var $radioStrength = $('<input type="radio" name="as" id="radioStrength" />');
 	var $span6 = $("<span>").html("Controlled");
 	var $radioControlled = $('<input type="radio" name="as" id="radioControlled" />');
-	$form.append($span4, $radioAccurate, $span5, $radioStrength, $span6, $radioControlled);
+	$form.append($span4, $radioAccurate, $span5, $radioStrength, $span6, $radioControlled, $("<br>"));
+	var $span7 = $("<span>").html("St");
+	var $radioStab = $('<input type="radio" name="st" id="radioStab" />');
+	var $span8 = $("<span>").html("Sl");
+	var $radioSlash = $('<input type="radio" name="st" id="radioSlash" />');
+	var $span9 = $("<span>").html("Cr");
+	var $radioCrush = $('<input type="radio" name="st" id="radioCrush" />');
+	$form.append($span7, $radioStab, $span8, $radioSlash, $span9, $radioCrush, $("<br>"));
 	$("#attackStyle").append($span3, $form);
 	
-	var $span7 = $("<span>").html("P");
+	var $span10 = $("<span>").html("P");
 	var $pAccuracy = $("<datalist>").attr("id", "acc");
 	var $pStrength = $("<datalist>").attr("id", "str");
 	var $p1 = $('<input id="p1" list="acc" size="40" />');
 	var $p2 = $('<input id="p2" list="str" size="40" />');
-	$("#prayer").append($span7, $("<br>"), $pAccuracy, $pStrength, $p1, $("<br>"), $p2);
+	$("#prayer").append($span10, $("<br>"), $pAccuracy, $pStrength, $p1, $("<br>"), $p2);
 	
 	
 	var style = "melee";
@@ -273,3 +280,44 @@ function getPotList(potStyle, $potList) {
         alert( "Request failed: " + errorThrown );
     });
 }
+
+
+
+$('#testButton').click(function() {
+	alert("IN A");
+	getMeleeAccuracy();
+});
+
+function getMeleeAccuracy() {
+	var baseAtk = parseInt($("#baseAtk").val());
+	var potAtk = $("#potAtk").val();
+	var percentage = 0;
+	var constant = 0
+	if (potAtk != "") {
+		percentage = parseInt(potAtk.substr(potAtk.search(/([\d]+%)/)));
+		constant = parseInt(potAtk.substr(potAtk.search(/( [\d]+)/)));
+	}
+	var visible = Math.floor(baseAtk + baseAtk * percentage / 100) + constant;
+
+	var p1 = $("#p1").val() || "1";
+	var p2 = $("#p2").val() || "1";
+	var pAtk = parseFloat(p1.substr(p1.search(/([\d]\.?[\d]*)/)));
+	var pStr = parseFloat(p2.substr(p2.search(/([\d]\.?[\d]*)/)));
+	
+	var style = 0;
+	if($("#radioAccurate").is(':checked')) { style = 3; }
+    else if($("#radioControlled").is(':checked')) { style = 1; }
+	else if($("#radioStrength").is(':checked')) { style = 0; }
+	else { alert("No style"); }
+	
+	var bonus = 0;
+	if($("#radioStab").is(':checked')) { bonus = $("#total").find(".st").val() || "0"; }
+    else if($("#radioSlash").is(':checked')) { bonus = $("#total").find(".sl").val() || "0"; }
+	else if($("#radioCrush").is(':checked')) { bonus = $("#total").find(".cr").val() || "0"; }
+	else { alert("No equip bonus"); }
+	
+	
+	
+	alert(bonus);
+}
+
