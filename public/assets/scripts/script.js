@@ -27,6 +27,8 @@ function makeSlot(symbol, shortName, datalist, url) {
 	var $symbol = $("<td>").html(symbol);
 	var $name = $("<td>").append($("<input>").attr({"class" : "name", "list" : datalist}));
 	var $ticks = $("<td>").append($("<input>").addClass("ticks"));
+	if (shortName != "wep")
+		$ticks.children().hide();
 	var $str = $("<td>").append($("<input>").addClass("str"));
 	var $r = $("<td>").append($("<input>").addClass("r"));
 	var $m = $("<td>").append($("<input>").addClass("m"));
@@ -87,12 +89,11 @@ function updateTotal() {
 
 function setChangeFn(slot) {
 	$(slot).each(function(){
-		if ($(this).parent().attr("id") != "total") {
-			$(this).change(function() {
-				sumStatTotal(slot);
-			});
-		}
+		$(this).change(function() {
+			sumStatTotal(slot);
+		});
 	});
+	$("#total").find("*").off("change");
 }
 
 function calculateAllTotals() {
@@ -301,7 +302,7 @@ function getMeleeAccuracy() {
 
 	var p1 = $("#p1").val() || "1";
 	var p2 = $("#p2").val() || "1";
-	var pAtk = parseFloat(p1.substr(p1.search(/([\d]\.?[\d]*)/)));
+	var pAcc = parseFloat(p1.substr(p1.search(/([\d]\.?[\d]*)/)));
 	var pStr = parseFloat(p2.substr(p2.search(/([\d]\.?[\d]*)/)));
 	
 	var style = 0;
@@ -310,14 +311,48 @@ function getMeleeAccuracy() {
 	else if($("#radioStrength").is(':checked')) { style = 0; }
 	else { alert("No style"); }
 	
+	var v = 1;
+	if ($("#head").find(".name").val().toLowerCase().indexOf("void") != -1
+		&& $("#chest").find(".name").val().toLowerCase().indexOf("void") != -1
+		&& $("#legs").find(".name").val().toLowerCase().indexOf("void") != -1
+		&& $("#hands").find(".name").val().toLowerCase().indexOf("void") != -1
+		) {v = 1.1;}
+	
 	var bonus = 0;
 	if($("#radioStab").is(':checked')) { bonus = $("#total").find(".st").val() || "0"; }
     else if($("#radioSlash").is(':checked')) { bonus = $("#total").find(".sl").val() || "0"; }
 	else if($("#radioCrush").is(':checked')) { bonus = $("#total").find(".cr").val() || "0"; }
 	else { alert("No equip bonus"); }
 	
+	var gear = 1;
+	if ($("#head").find(".name").val().toLowerCase().indexOf("slayer") != -1
+	 || $("#head").find(".name").val().toLowerCase().indexOf("black mask") != -1) {
+		gear = 7/6;
+	}
+	if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet (e)") != -1) {
+		gear 1.2;
+	}
+	else if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet") != -1) {
+		gear 7/6;
+	}
 	
 	
-	alert(bonus);
+	var load = {visible, pAcc, style, v, bonus, gear};
+	
+	$.ajax({
+        url: "\/calculate\/roll", 
+        method: "POST",
+        dataType: "json",
+		data: load
+    })
+    .done(function(jsondata){
+		var data = jsondata.data;
+
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
+	
+
 }
 

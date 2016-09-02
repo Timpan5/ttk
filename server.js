@@ -133,7 +133,13 @@ app.get("*", function(req, res) {
 	console.log("*: " + req.path);
 });
 
-
+app.post("/calculate/roll", function (req, res) {
+	
+	var input = req.body;
+	console.log(input);
+	
+	maxRoll(parseInt(input.visible), parseFloat(input.pAcc), parseInt(input.style), parseFloat(input.v), parseInt(input.bonus), parseFloat(input.gear));
+});
 
 function getItemQuery(tableName) {
 	return "SELECT * FROM " + tableName + " WHERE name=$1";
@@ -220,12 +226,12 @@ function npcStats(stats) {
 }
 
 function maxHit() {
-	var visible = 118;
-	var prayer = 1.23;
-	var step1 = Math.floor(visible * prayer);
-	var stance = 3;
+	var visible = 118; //
+	var p = 1.23; //
+	var step1 = Math.floor(visible * p);
+	var stance = 3; //
 	var step2 = step1 + stance + 8;
-	var v = 1;
+	var v = 1; //
 	var A = Math.floor(step2 * v);
 	
 	var B = 100;
@@ -257,26 +263,25 @@ function hitChance(rollA, rollD) {
 	}
 }
 
-function maxRoll() {
-	var visible = 100;
-	var prayer = 1.2;
-	var step1 = Math.floor(visible * prayer);
-	var stance = 3;
+function maxRoll(visible, prayer, stance, v, B, gear) {
+
+	var step1 = Math.floor(visible * prayer); 
 	var step2 = step1 + stance + 8;
-	var v = 1; //void
-	var A = Math.floor(step2 * v);
 	
-	var B = 200;
+	console.log("1: " + step2);
+	
+	var A = Math.floor(step2 * v);
 	
 	var maxRollBase = A * (B + 64);
 	
-	var gear = 7/6;
+	console.log("2: " + maxRollBase);
+	
 	var step3 = Math.floor(maxRollBase * gear);
-	var special = 1;
+	var special = 1; //weapon
 	
 	var maxRoll = Math.floor(step3 * special);
 	
-	console.log(maxRoll);
+	console.log("3: " + maxRoll);
 }
 
 function getStats(id, title, page) {
