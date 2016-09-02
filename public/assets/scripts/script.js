@@ -11,10 +11,11 @@ const slotNames = [
 	["L", "legs", "lList", "legsList", "stats\/armor\/legs"],
 	["Ha", "hands", "haList", "handsList", "stats\/armor\/hands"],
 	["F", "feet", "fList", "feetList", "stats\/armor\/feet"],
-	["R", "ring", "rList", "ringList", "stats\/armor\/ring"],
+	["R", "ring", "rList", "ringList", "stats\/armor\/ring"]
 ];
 
 function loadEquipmentSlots() {
+	
 	slotNames.forEach(function(item){
 		makeSlot(item[0], item[1], item[2], item[3]);
 		loadDatalist(item[2], item[3]);
@@ -289,6 +290,8 @@ $('#testButton').click(function() {
 	getMeleeAccuracy();
 });
 
+
+
 function getMeleeAccuracy() {
 	var baseAtk = parseInt($("#baseAtk").val());
 	var potAtk = $("#potAtk").val();
@@ -324,19 +327,22 @@ function getMeleeAccuracy() {
 	else if($("#radioCrush").is(':checked')) { bonus = $("#total").find(".cr").val() || "0"; }
 	else { alert("No equip bonus"); }
 	
+	
 	var gear = 1;
+	
 	if ($("#head").find(".name").val().toLowerCase().indexOf("slayer") != -1
 	 || $("#head").find(".name").val().toLowerCase().indexOf("black mask") != -1) {
 		gear = 7/6;
 	}
+	
 	if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet (e)") != -1) {
-		gear 1.2;
+		gear = 1.2;
 	}
+	
 	else if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet") != -1) {
-		gear 7/6;
+		gear = 7/6;
 	}
-	
-	
+
 	var load = {visible, pAcc, style, v, bonus, gear};
 	
 	$.ajax({
@@ -355,4 +361,5 @@ function getMeleeAccuracy() {
 	
 
 }
+
 
