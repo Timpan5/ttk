@@ -14,6 +14,11 @@ const slotNames = [
 	["R", "ring", "rList", "ringList", "stats\/armor\/ring"]
 ];
 
+function loadLists() {
+	loadEquipmentSlots();
+	loadNpcList();
+}
+
 function loadEquipmentSlots() {
 	
 	slotNames.forEach(function(item){
@@ -288,7 +293,8 @@ function getPotList(potStyle, $potList) {
 $('#testButton').click(function() {
 	alert("IN A");
 	//getMeleeAccuracy();
-	getMeleeMax();
+	//getMeleeMax();
+	//getNpcStats();
 });
 
 
@@ -427,3 +433,55 @@ function getMeleeMax() {
     });	
 }
 
+function loadNpcList() {
+	var $section = $("#enemy");
+	var $datalist = $('<datalist id="npcList"/>');
+	$section.append($datalist);
+	
+	$.ajax({
+        url: "\/npc", 
+        method: "GET",
+        dataType: "json"
+    })
+    .done(function(jsondata){
+		var data = jsondata.data;
+		
+		for (i = 0; i < data.length; i++) {
+			var $option = $("<option>");
+			$option.text(data[i].name).val(data[i].name);
+			$datalist.append($option);
+		}
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
+}
+
+function getNpcStats() {
+	var name = $("#npcName").val();
+	
+	if (name != "") {
+		$.ajax({
+			url: "\/npc\/" + name, 
+			method: "GET",
+			dataType: "json"
+		})
+		.done(function(jsondata){
+			var data = jsondata.data[0];
+			
+			$("#npcHp").val(data.hp);
+			$("#npcDef").val(data.base[2]);
+			$("#npcM").val(data.base[4]);
+			
+			$("#npcSt").val(data.defense[0]);
+			$("#npcSl").val(data.defense[1]);
+			$("#npcCr").val(data.defense[2]);
+			$("#npcMa").val(data.defense[3]);
+			$("#npcRa").val(data.defense[4]);
+		})
+		.fail(function(jqXHR, textStatus, errorThrown){
+			alert( "Request failed: " + errorThrown );
+		});
+	}
+	
+}

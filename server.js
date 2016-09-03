@@ -129,10 +129,6 @@ app.get(/(potion)/, function (req, res) {
 	}	
 });
 
-app.get("*", function(req, res) {
-	console.log("*: " + req.path);
-});
-
 app.post("/calculate/roll/melee", function (req, res) {
 	var input = req.body;
 	console.log(input);
@@ -147,6 +143,55 @@ app.post("/calculate/hit/melee", function (req, res) {
 	//maxHit(visible, prayer, stance, v, B, gear)
 	var hit = maxHit(parseInt(input.visible), parseFloat(input.pStr), parseInt(input.style), parseFloat(input.v), parseInt(input.bonus), parseFloat(input.gear));
 	res.send({hit});
+});
+
+app.get(/(npc)/, function(req, res) {
+	var base = req.path;
+	var item = base.split("\/");
+	var query;
+	
+	if (item.length == 2) {
+		query = "SELECT name FROM npc";
+		pool.query(query, function(err, result) {
+			var jsonObj = {"data" : result.rows};
+			if (!result.rows.length) {
+				res.statusMessage = "Item not found";
+				res.status(400).end();
+			}
+			else {
+				res.send(jsonObj);
+			}
+		});
+	}
+	else if (item.length == 3) {
+		var name = decodeURIComponent(item[2]);
+		var query = "SELECT * FROM npc WHERE name=$1";
+		var queryName = "npc_name";
+		
+		pool.query({name : queryName, text : query, values : [name]}, function(err, result) {
+			var jsonObj = {"data" : result.rows};
+			if (!result.rows.length) {
+				res.statusMessage = "Item not found";
+				res.status(400).end();
+			}
+			else {
+				res.send(jsonObj);
+				//console.log(jsonObj.data);
+			}
+		});
+		
+	}
+	else {
+		console.log("NPC failed");
+		res.status(400).send("NPC failed");
+	}	
+
+	
+});
+
+
+app.get("*", function(req, res) {
+	console.log("*: " + req.path);
 });
 
 function getItemQuery(tableName) {

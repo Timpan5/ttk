@@ -1,3 +1,7 @@
 #rawData {
 	display: none;
 }
+
+#enemy th,td {
+	text-align: center;
+}

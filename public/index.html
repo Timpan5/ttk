@@ -8,7 +8,7 @@
 		<script type="text/javascript" src="assets/scripts/script.js" defer></script>
 	</head>
 	
-	<body onload="loadEquipmentSlots()">
+	<body onload="loadLists()">
 	
 	<table id="equipment">
 		<tr>
@@ -42,18 +42,36 @@
 	
 	<section id="gear">
 		<form action="">
-			<input id="checkSlay" type="checkbox"> Slay </input> <br>
-			<input id="checkSalve" type="checkbox"> Salve </input> <br>
+			<input id="checkSlay" type="checkbox" checked="true"> Slay </input> <br>
+			<input id="checkSalve" type="checkbox" checked="true"> Salve </input> <br>
 		</form>
 	</section>
 	
-	<section id="results" > 
+	<br>
+	
+	<section id="results"> 
 	
 		<section id="rawData">
 			<p id="attackRoll"></p>
 			<p id="maxHit"></p>
 		</section>
 	
+	</section>
+	
+	<section id="enemy">
+		<span> NPC Name </span> <input id="npcName" list="npcList" onchange="getNpcStats()"></input> <br>
+		
+		<table id="npcStats">
+			<tr>
+				<th>HP</th> <th>Def</th> <th>M</th> 
+				<th>St</th> <th>Sl</th> <th>Cr</th> <th>Ma</th> <th>Ra</th>
+			</tr>
+			<tr>
+				<td><input id="npcHp" size="5"/></td> <td><input id="npcDef" size="5"/></td> <td><input id="npcM" size="5"/></td>
+				<td><input id="npcSt" size="5"/></td> <td><input id="npcSl" size="5"/></td> <td><input id="npcCr" size="5"/></td> <td><input id="npcMa" size="5"/></td> <td><input id="npcRa" size="5"/></td>
+			</tr>
+		</table>
+		
 	</section>
 	
 	</body>
