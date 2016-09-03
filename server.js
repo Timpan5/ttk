@@ -133,12 +133,20 @@ app.get("*", function(req, res) {
 	console.log("*: " + req.path);
 });
 
-app.post("/calculate/roll", function (req, res) {
-	
+app.post("/calculate/roll/melee", function (req, res) {
 	var input = req.body;
 	console.log(input);
 	
-	maxRoll(parseInt(input.visible), parseFloat(input.pAcc), parseInt(input.style), parseFloat(input.v), parseInt(input.bonus), parseFloat(input.gear));
+	var roll = maxRoll(parseInt(input.visible), parseFloat(input.pAcc), parseInt(input.style), parseFloat(input.v), parseInt(input.bonus), parseFloat(input.gear));
+	res.send({roll});
+});
+
+app.post("/calculate/hit/melee", function (req, res) {
+	var input = req.body;
+	console.log(input);
+	//maxHit(visible, prayer, stance, v, B, gear)
+	var hit = maxHit(parseInt(input.visible), parseFloat(input.pStr), parseInt(input.style), parseFloat(input.v), parseInt(input.bonus), parseFloat(input.gear));
+	res.send({hit});
 });
 
 function getItemQuery(tableName) {
@@ -225,30 +233,22 @@ function npcStats(stats) {
 	return stats;
 }
 
-function maxHit() {
-	var visible = 118; //
-	var p = 1.23; //
-	var step1 = Math.floor(visible * p);
-	var stance = 3; //
+function maxHit(visible, prayer, stance, v, B, gear) {
+	var step1 = Math.floor(visible * prayer);
 	var step2 = step1 + stance + 8;
-	var v = 1; //
 	var A = Math.floor(step2 * v);
-	
-	var B = 100;
-	
+
 	var maxHitBase = Math.floor(0.5 + A * (B+64)/640);
-	
-	var gear = 7/6;
 	var step3 = Math.floor(maxHitBase * gear);
+	
 	var special = 1;
 	var step4 = Math.floor(step3 * special);
+	
 	var pvp = 1;
 	var step5 = Math.floor(step4 * pvp);
 	
 	var weaponEffect = 1;
-	var verac = 0; //ONLY on special activation
-	
-	var maxHit = Math.floor(step5 * weaponEffect + verac);
+	var maxHit = Math.floor(step5 * weaponEffect);
 	
 	console.log(maxHit);
 }
@@ -282,6 +282,7 @@ function maxRoll(visible, prayer, stance, v, B, gear) {
 	var maxRoll = Math.floor(step3 * special);
 	
 	console.log("3: " + maxRoll);
+	return maxRoll;
 }
 
 function getStats(id, title, page) {

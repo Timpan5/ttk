@@ -27,17 +27,17 @@ function makeSlot(symbol, shortName, datalist, url) {
 	var $tr = $("<tr>").attr("id", shortName);
 	var $symbol = $("<td>").html(symbol);
 	var $name = $("<td>").append($("<input>").attr({"class" : "name", "list" : datalist}));
-	var $ticks = $("<td>").append($("<input>").addClass("ticks"));
+	var $ticks = $("<td>").append($('<input class="ticks" size="5">'));
 	if (shortName != "wep")
 		$ticks.children().hide();
-	var $str = $("<td>").append($("<input>").addClass("str"));
-	var $r = $("<td>").append($("<input>").addClass("r"));
-	var $m = $("<td>").append($("<input>").addClass("m"));
-	var $st = $("<td>").append($("<input>").addClass("st"));
-	var $sl = $("<td>").append($("<input>").addClass("sl"));
-	var $cr = $("<td>").append($("<input>").addClass("cr"));
-	var $ma = $("<td>").append($("<input>").addClass("ma"));
-	var $ra = $("<td>").append($("<input>").addClass("ra"));
+	var $str = $("<td>").append($('<input class="str" size="5">'));
+	var $r = $("<td>").append($('<input class="r" size="5">'));
+	var $m = $("<td>").append($('<input class="m" size="5">'));
+	var $st = $("<td>").append($('<input class="st" size="5">'));
+	var $sl = $("<td>").append($('<input class="sl" size="5">'));
+	var $cr = $("<td>").append($('<input class="cr" size="5">'));
+	var $ma = $("<td>").append($('<input class="ma" size="5">'));
+	var $ra = $("<td>").append($('<input class="ra" size="5">'));
 
 	$name.find(".name").change(function() {
 		ajaxStats($tr, url);
@@ -51,15 +51,15 @@ function makeTotal() {
 	var $tr = $("<tr>").attr("id", "total");
 	var $symbol = $("<td>").html("");
 	var $name = $("<td>").html("<b>Total</b>");
-	var $ticks = $("<td>").append($("<input>").addClass("ticks"));
-	var $str = $("<td>").append($("<input>").addClass("str"));
-	var $r = $("<td>").append($("<input>").addClass("r"));
-	var $m = $("<td>").append($("<input>").addClass("m"));
-	var $st = $("<td>").append($("<input>").addClass("st"));
-	var $sl = $("<td>").append($("<input>").addClass("sl"));
-	var $cr = $("<td>").append($("<input>").addClass("cr"));
-	var $ma = $("<td>").append($("<input>").addClass("ma"));
-	var $ra = $("<td>").append($("<input>").addClass("ra"));
+	var $ticks = $("<td>").append($('<input class="ticks" size="5">'));
+	var $str = $("<td>").append($('<input class="str" size="5">'));
+	var $r = $("<td>").append($('<input class="r" size="5">'));
+	var $m = $("<td>").append($('<input class="m" size="5">'));
+	var $st = $("<td>").append($('<input class="st" size="5">'));
+	var $sl = $("<td>").append($('<input class="sl" size="5">'));
+	var $cr = $("<td>").append($('<input class="cr" size="5">'));
+	var $ma = $("<td>").append($('<input class="ma" size="5">'));
+	var $ra = $("<td>").append($('<input class="ra" size="5">'));
 	
 	$tr.append($symbol, $name, $ticks, $str, $r, $m, $st, $sl, $cr, $ma, $ra);
 	$("#equipment").append($tr); //hardcoded table id
@@ -287,7 +287,8 @@ function getPotList(potStyle, $potList) {
 
 $('#testButton').click(function() {
 	alert("IN A");
-	getMeleeAccuracy();
+	//getMeleeAccuracy();
+	getMeleeMax();
 });
 
 
@@ -304,9 +305,7 @@ function getMeleeAccuracy() {
 	var visible = Math.floor(baseAtk + baseAtk * percentage / 100) + constant;
 
 	var p1 = $("#p1").val() || "1";
-	var p2 = $("#p2").val() || "1";
 	var pAcc = parseFloat(p1.substr(p1.search(/([\d]\.?[\d]*)/)));
-	var pStr = parseFloat(p2.substr(p2.search(/([\d]\.?[\d]*)/)));
 	
 	var style = 0;
 	if($("#radioAccurate").is(':checked')) { style = 3; }
@@ -327,39 +326,104 @@ function getMeleeAccuracy() {
 	else if($("#radioCrush").is(':checked')) { bonus = $("#total").find(".cr").val() || "0"; }
 	else { alert("No equip bonus"); }
 	
-	
 	var gear = 1;
 	
-	if ($("#head").find(".name").val().toLowerCase().indexOf("slayer") != -1
-	 || $("#head").find(".name").val().toLowerCase().indexOf("black mask") != -1) {
-		gear = 7/6;
-	}
+	if($("#checkSlay").is(':checked')) {
+		if ($("#head").find(".name").val().toLowerCase().indexOf("slayer") != -1
+		 || $("#head").find(".name").val().toLowerCase().indexOf("black mask") != -1) {
+			gear = 7/6;
+		}
+	};
 	
-	if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet (e)") != -1) {
-		gear = 1.2;
-	}
-	
-	else if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet") != -1) {
-		gear = 7/6;
-	}
+	if($("#checkSalve").is(':checked')) {
+		if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet (e)") != -1) {
+			gear = 1.2;
+		}
+		else if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet") != -1) {
+			gear = 7/6;
+		}
+	};
 
 	var load = {visible, pAcc, style, v, bonus, gear};
-	
+
 	$.ajax({
-        url: "\/calculate\/roll", 
+        url: "\/calculate\/roll\/melee", 
         method: "POST",
         dataType: "json",
 		data: load
     })
     .done(function(jsondata){
-		var data = jsondata.data;
+		var data = jsondata.roll;
+		$("#attackRoll").html(data);
 
     })
     .fail(function(jqXHR, textStatus, errorThrown){
         alert( "Request failed: " + errorThrown );
     });
-	
-
 }
 
+function getMeleeMax() {
+	var baseStr = parseInt($("#baseStr").val());
+	var potStr = $("#potStr").val();
+	var percentage = 0;
+	var constant = 0
+	if (potStr != "") {
+		percentage = parseInt(potStr.substr(potStr.search(/([\d]+%)/)));
+		constant = parseInt(potStr.substr(potStr.search(/( [\d]+)/)));
+	}
+	var visible = Math.floor(baseStr + baseStr * percentage / 100) + constant;
+
+	var p2 = $("#p2").val() || "1";
+	var pStr = parseFloat(p2.substr(p2.search(/([\d]\.?[\d]*)/)));
+	
+	var style = 0;
+	if($("#radioAccurate").is(':checked')) { style = 0; }
+    else if($("#radioControlled").is(':checked')) { style = 1; }
+	else if($("#radioStrength").is(':checked')) { style = 3; }
+	else { alert("No style"); }
+	
+	var v = 1;
+	if ($("#head").find(".name").val().toLowerCase().indexOf("void") != -1
+		&& $("#chest").find(".name").val().toLowerCase().indexOf("void") != -1
+		&& $("#legs").find(".name").val().toLowerCase().indexOf("void") != -1
+		&& $("#hands").find(".name").val().toLowerCase().indexOf("void") != -1
+		) {v = 1.1;}
+	
+	var bonus = $("#total").find(".str").val() || 0;
+	
+	var gear = 1;
+	
+	if($("#checkSlay").is(':checked')) {
+		if ($("#head").find(".name").val().toLowerCase().indexOf("slayer") != -1
+		 || $("#head").find(".name").val().toLowerCase().indexOf("black mask") != -1) {
+			gear = 7/6;
+		}
+	};
+	
+	if($("#checkSalve").is(':checked')) {
+		if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet (e)") != -1) {
+			gear = 1.2;
+		}
+		else if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet") != -1) {
+			gear = 7/6;
+		}
+	};
+
+	var load = {visible, pStr, style, v, bonus, gear};
+	
+	$.ajax({
+        url: "\/calculate\/hit\/melee", 
+        method: "POST",
+        dataType: "json",
+		data: load
+    })
+    .done(function(jsondata){
+		var data = jsondata.hit;
+		$("#maxHit").html(data);
+
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });	
+}
 
