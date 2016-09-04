@@ -295,6 +295,7 @@ $('#testButton').click(function() {
 	//getMeleeAccuracy();
 	//getMeleeMax();
 	//getNpcStats();
+	getDefRoll();
 });
 
 
@@ -483,5 +484,38 @@ function getNpcStats() {
 			alert( "Request failed: " + errorThrown );
 		});
 	}
+}
+
+function getDefRoll() {
+	
+	var visible = $("#npcDef").val();
+	
+	var pAcc = 1;
+	var style = 1;
+	var v = 1;
+	var gear = 1;
+	
+	var bonus = 0;
+	if($("#radioStab").is(':checked')) { bonus = $("#npcSl").val() || "0"; }
+    else if($("#radioSlash").is(':checked')) { bonus = $("#npcSl").val() || "0"; }
+	else if($("#radioCrush").is(':checked')) { bonus = $("#npcCr").val() || "0"; }
+	else { alert("No equip bonus"); }
+	
+	var load = {visible, pAcc, style, v, bonus, gear};
+
+	$.ajax({
+        url: "\/calculate\/roll\/melee", 
+        method: "POST",
+        dataType: "json",
+		data: load
+    })
+    .done(function(jsondata){
+		var data = jsondata.roll;
+		$("#defRoll").html(data);
+
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
 	
 }
