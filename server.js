@@ -189,6 +189,13 @@ app.get(/(npc)/, function(req, res) {
 	
 });
 
+app.post("/calculate/chance", function (req, res) {
+	var input = req.body;
+	console.log(input);
+	var chance = hitChance(parseInt(input.A), parseInt(input.B));
+	console.log(chance);
+	res.send({chance});
+});
 
 app.get("*", function(req, res) {
 	console.log("*: " + req.path);
@@ -306,6 +313,7 @@ function hitChance(rollA, rollD) {
 	else {
 		chance = rollA / (2 * (rollD + 1));
 	}
+	return chance;
 }
 
 function maxRoll(visible, prayer, stance, v, B, gear) {

@@ -288,16 +288,23 @@ function getPotList(potStyle, $potList) {
     });
 }
 
+//@@@@@@@@@@@@@@@@
 
 
-$('#testButton').click(function() {
-	alert("IN A");
-	//getMeleeAccuracy();
-	//getMeleeMax();
-	//getNpcStats();
+
+$("#testButton").click(function() {
+	alert("TEST");
+	getMeleeAccuracy();
+	getMeleeMax();
 	getDefRoll();
+	
 });
 
+$("#calc").click(function() {
+	getHitChance();
+});
+
+//@@@@@@@@@@@@@@@@@
 
 
 function getMeleeAccuracy() {
@@ -517,5 +524,27 @@ function getDefRoll() {
     .fail(function(jqXHR, textStatus, errorThrown){
         alert( "Request failed: " + errorThrown );
     });
+}
+
+function getHitChance() {
+	var A = $("#attackRoll").html();
+	var B = $("#defRoll").html();
+	var load = {A,B};
 	
+	alert(JSON.stringify(load));
+	
+	$.ajax({
+        url: "\/calculate\/chance", 
+        method: "POST",
+        dataType: "json",
+		data: load
+    })
+    .done(function(jsondata){
+		var data = jsondata.chance;
+		alert(data);
+		$("#hitChance").html(data);
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
 }
