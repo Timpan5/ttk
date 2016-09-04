@@ -140,7 +140,6 @@ app.post("/calculate/roll/melee", function (req, res) {
 app.post("/calculate/hit/melee", function (req, res) {
 	var input = req.body;
 	console.log(input);
-	//maxHit(visible, prayer, stance, v, B, gear)
 	var hit = maxHit(parseInt(input.visible), parseFloat(input.pStr), parseInt(input.style), parseFloat(input.v), parseInt(input.bonus), parseFloat(input.gear));
 	res.send({hit});
 });
@@ -302,7 +301,7 @@ function maxHit(visible, prayer, stance, v, B, gear) {
 	var weaponEffect = 1;
 	var maxHit = Math.floor(step5 * weaponEffect);
 	
-	console.log(maxHit);
+	return maxHit;
 }
 
 function hitChance(rollA, rollD) {

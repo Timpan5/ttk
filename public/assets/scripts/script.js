@@ -293,17 +293,19 @@ function getPotList(potStyle, $potList) {
 
 
 $("#testButton").click(function() {
-	alert("TEST");
 	getMeleeAccuracy();
 	getMeleeMax();
 	getDefRoll();
-	
 });
 
 $("#calc").click(function() {
 	getHitChance();
 });
 
+$("#simulate").click(function() {
+	for (i = 0; i < 100; i++)
+		simulate();
+});
 //@@@@@@@@@@@@@@@@@
 
 
@@ -531,7 +533,7 @@ function getHitChance() {
 	var B = $("#defRoll").html();
 	var load = {A,B};
 	
-	alert(JSON.stringify(load));
+	//alert(JSON.stringify(load));
 	
 	$.ajax({
         url: "\/calculate\/chance", 
@@ -541,10 +543,50 @@ function getHitChance() {
     })
     .done(function(jsondata){
 		var data = jsondata.chance;
-		alert(data);
+		//alert(data);
 		$("#hitChance").html(data);
     })
     .fail(function(jqXHR, textStatus, errorThrown){
         alert( "Request failed: " + errorThrown );
     });
+}
+
+/*
+function hit() {
+	alert("IN");
+	var hit = 0;
+	var rand = Math.random();
+	alert(rand);
+	if (rand <= $("#hitChance").html()) {
+		hit = Math.floor(Math.random() * $("#maxHit").html());
+	}
+	alert("HIT: " + hit);
+	return hit;
+}
+
+		var hit = (function() {
+			var h = 0;
+			var rand = Math.random();
+			if (rand <= $("#hitChance").html()) {
+				h = Math.floor(Math.random() * $("#maxHit").html());
+			}
+			return h;
+		})();
+*/
+
+function simulate() {
+	var hp = parseInt($("#npcHp").val());
+	var count = 0;
+	while(hp > 0) {
+		//alert(hp);
+		var hit = 0;
+		if (Math.random() <= $("#hitChance").html()) {
+			hit = Math.floor(Math.random() * $("#maxHit").html());
+		}
+		$("#simulation").append($("<span>").html("  " + hit));
+		hp = hp - hit;
+		count++;
+	}
+	var $count = $("<span>").html(" <b>" + count + "</b>");
+	$("#simulation").append($count, $("<br>"));
 }
