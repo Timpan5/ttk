@@ -304,7 +304,7 @@ $("#calc").click(function() {
 
 $("#simulate").click(function() {
 	
-	for (i = 0; i < 100; i++)
+	for (i = 0; i < 1000; i++)
 		simulate();
 	
 	
@@ -403,22 +403,37 @@ function getMeleeMax() {
 	else { alert("No style"); }
 	
 	var v = 1;
+	if($("#checkVoid").is(':checked')) {
+		v = 1.1;
+	}
+	
+	/*
 	if ($("#head").find(".name").val().toLowerCase().indexOf("void") != -1
 		&& $("#chest").find(".name").val().toLowerCase().indexOf("void") != -1
 		&& $("#legs").find(".name").val().toLowerCase().indexOf("void") != -1
 		&& $("#hands").find(".name").val().toLowerCase().indexOf("void") != -1
 		) {v = 1.1;}
+	*/
 	
 	var bonus = $("#total").find(".str").val() || 0;
 	
 	var gear = 1;
 	
+	if($("#checkSalve").is(':checked')) {
+		gear = 1.2;
+	}
+	else if($("#checkSlay").is(':checked')) {
+		gear = 7/6;
+	}
+
+	/*
 	if($("#checkSlay").is(':checked')) {
 		if ($("#head").find(".name").val().toLowerCase().indexOf("slayer") != -1
 		 || $("#head").find(".name").val().toLowerCase().indexOf("black mask") != -1) {
 			gear = 7/6;
 		}
 	};
+	
 	
 	if($("#checkSalve").is(':checked')) {
 		if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet (e)") != -1) {
@@ -428,6 +443,7 @@ function getMeleeMax() {
 			gear = 7/6;
 		}
 	};
+	*/
 
 	var load = {visible, pStr, style, v, bonus, gear};
 	
@@ -555,31 +571,8 @@ function getHitChance() {
     });
 }
 
-/*
-function hit() {
-	alert("IN");
-	var hit = 0;
-	var rand = Math.random();
-	alert(rand);
-	if (rand <= $("#hitChance").html()) {
-		hit = Math.floor(Math.random() * $("#maxHit").html());
-	}
-	alert("HIT: " + hit);
-	return hit;
-}
-
-		var hit = (function() {
-			var h = 0;
-			var rand = Math.random();
-			if (rand <= $("#hitChance").html()) {
-				h = Math.floor(Math.random() * $("#maxHit").html());
-			}
-			return h;
-		})();
-*/
-
-//yaxis=number with this hit  xaxis=hits
 function simulate() {
+	$("#hitCounts").clear();
 	var hp = parseInt($("#npcHp").val());
 	var count = 0;
 	while(hp > 0) {
@@ -618,41 +611,26 @@ function makeChart() {
 	}
 
 	for (j = 0; j < hitCounts.length; j++) {
-		var h = hitCounts[j]; //parseInt?
+		var h = hitCounts[j]; 
 		var slot = h - begin;
 		count[slot]++;
 	}
 	
-	alert(ticks);
-	alert(count);
+	//alert(ticks);
+	//alert(count);
 	
+	var ctx = $("#graph");
 	
-	/*
-	var ctx = document.getElementById("myChart");
 	var myChart = new Chart(ctx, {
 		type: 'bar',
 		data: {
-			labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+			labels: ticks, //["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
 			datasets: [{
-				label: '# of Votes',
-				data: [12, 19, 3, 5, 2, 3],
-				backgroundColor: [
-					'rgba(255, 99, 132, 0.2)',
-					'rgba(54, 162, 235, 0.2)',
-					'rgba(255, 206, 86, 0.2)',
-					'rgba(75, 192, 192, 0.2)',
-					'rgba(153, 102, 255, 0.2)',
-					'rgba(255, 159, 64, 0.2)'
-				],
-				borderColor: [
-					'rgba(255,99,132,1)',
-					'rgba(54, 162, 235, 1)',
-					'rgba(255, 206, 86, 1)',
-					'rgba(75, 192, 192, 1)',
-					'rgba(153, 102, 255, 1)',
-					'rgba(255, 159, 64, 1)'
-				],
-				borderWidth: 1
+				label: 'Simulation ends at: ',
+				data: count, //[12, 19, 3, 5, 2, 3],
+				backgroundColor: "rgba(27,212,232,1)",
+				borderColor: "rgba(232,143,27,1)",
+				borderWidth: 2
 			}]
 		},
 		options: {
@@ -665,5 +643,5 @@ function makeChart() {
 			}
 		}
 	});
-	*/
+	
 }
