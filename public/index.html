@@ -6,6 +6,7 @@
 		<link rel="stylesheet" href="assets/css/style.css" />
 		<script type="text/javascript" src="assets/scripts/jquery-2.2.4.min.js" defer></script>
 		<script type="text/javascript" src="assets/scripts/script.js" defer></script>
+		<script type="text/javascript" src="assets/scripts/Chart.js" defer></script>
 	</head>
 	
 	<body onload="loadLists()">
@@ -74,12 +75,15 @@
 			<p id="maxHit"></p>
 			<p id="defRoll"></p>
 			<p id="hitChance"></p>
+			<div id="hitCounts"></div>
 		</section>
 	</section>
 	
 	<br>
 	
-	<section id="simulation"> </section>
+	<section id="simulation">
+		<canvas id="myChart" width="400" height="400"></canvas>
+	</section>
 	
 	</body>
 	

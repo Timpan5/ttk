@@ -303,8 +303,12 @@ $("#calc").click(function() {
 });
 
 $("#simulate").click(function() {
+	
 	for (i = 0; i < 100; i++)
 		simulate();
+	
+	
+	makeChart();
 });
 //@@@@@@@@@@@@@@@@@
 
@@ -574,6 +578,7 @@ function hit() {
 		})();
 */
 
+//yaxis=number with this hit  xaxis=hits
 function simulate() {
 	var hp = parseInt($("#npcHp").val());
 	var count = 0;
@@ -583,10 +588,82 @@ function simulate() {
 		if (Math.random() <= $("#hitChance").html()) {
 			hit = Math.floor(Math.random() * $("#maxHit").html());
 		}
-		$("#simulation").append($("<span>").html("  " + hit));
+		//$("#simulation").append($("<span>").html("  " + hit));
 		hp = hp - hit;
 		count++;
 	}
-	var $count = $("<span>").html(" <b>" + count + "</b>");
-	$("#simulation").append($count, $("<br>"));
+	//var $count = $("<span>").html(" <b>" + count + "</b>");
+	//$("#simulation").append($count, $("<br>"));
+	$("#hitCounts").append($("<span>").addClass("hitC").html(count));
+}
+
+function makeChart() {
+	
+	var ticks = [];
+	var count = [];
+	var hitCounts = [];
+	var hits = $(".hitC");	
+	
+	for(i = 0; i < hits.length; i++){
+		hitCounts.push(hits[i].innerHTML);
+	}
+	
+	hitCounts.sort(function(a, b){return a-b});
+	var begin = parseInt(hitCounts[0]);
+	var end = parseInt(hitCounts.slice(-1)[0]);
+	
+	for (i = 0; i <= end - begin; i++) {
+		ticks.push(i + begin);
+		count.push(0);
+	}
+
+	for (j = 0; j < hitCounts.length; j++) {
+		var h = hitCounts[j]; //parseInt?
+		var slot = h - begin;
+		count[slot]++;
+	}
+	
+	alert(ticks);
+	alert(count);
+	
+	
+	/*
+	var ctx = document.getElementById("myChart");
+	var myChart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+			datasets: [{
+				label: '# of Votes',
+				data: [12, 19, 3, 5, 2, 3],
+				backgroundColor: [
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)'
+				],
+				borderColor: [
+					'rgba(255,99,132,1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)'
+				],
+				borderWidth: 1
+			}]
+		},
+		options: {
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero:true
+					}
+				}]
+			}
+		}
+	});
+	*/
 }
