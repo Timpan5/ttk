@@ -289,6 +289,8 @@ function getPotList(potStyle, $potList) {
 }
 
 //@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@
 
 
 
@@ -303,14 +305,12 @@ $("#calc").click(function() {
 });
 
 $("#simulate").click(function() {
-	
-	for (i = 0; i < 1000; i++)
-		simulate();
-	
-	
-	makeChart();
+	simulate(1000);
 });
+
 //@@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@
 
 
 function getMeleeAccuracy() {
@@ -571,35 +571,31 @@ function getHitChance() {
     });
 }
 
-function simulate() {
-	$("#hitCounts").clear();
+function simulate(num) {
 	var hp = parseInt($("#npcHp").val());
 	var count = 0;
-	while(hp > 0) {
-		//alert(hp);
-		var hit = 0;
-		if (Math.random() <= $("#hitChance").html()) {
-			hit = Math.floor(Math.random() * $("#maxHit").html());
+	var results = [];
+	
+	for (i = 0; i < num; i++) {
+		var current = hp;
+		count = 0;
+		while(current > 0) {
+			var hit = 0;
+			if (Math.random() <= $("#hitChance").html()) {
+				hit = Math.floor(Math.random() * $("#maxHit").html());
+			}
+			current = current - hit;
+			count++;
 		}
-		//$("#simulation").append($("<span>").html("  " + hit));
-		hp = hp - hit;
-		count++;
+		results.push(count);
 	}
-	//var $count = $("<span>").html(" <b>" + count + "</b>");
-	//$("#simulation").append($count, $("<br>"));
-	$("#hitCounts").append($("<span>").addClass("hitC").html(count));
+	makeChart(results);
 }
 
-function makeChart() {
+function makeChart(hitCounts) {
 	
 	var ticks = [];
 	var count = [];
-	var hitCounts = [];
-	var hits = $(".hitC");	
-	
-	for(i = 0; i < hits.length; i++){
-		hitCounts.push(hits[i].innerHTML);
-	}
 	
 	hitCounts.sort(function(a, b){return a-b});
 	var begin = parseInt(hitCounts[0]);
@@ -615,13 +611,9 @@ function makeChart() {
 		var slot = h - begin;
 		count[slot]++;
 	}
-	
-	//alert(ticks);
-	//alert(count);
-	
-	var ctx = $("#graph");
-	
-	var myChart = new Chart(ctx, {
+
+	var graph = $("#graph");
+	var g = new Chart(graph, {
 		type: 'bar',
 		data: {
 			labels: ticks, //["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
@@ -630,7 +622,7 @@ function makeChart() {
 				data: count, //[12, 19, 3, 5, 2, 3],
 				backgroundColor: "rgba(27,212,232,1)",
 				borderColor: "rgba(232,143,27,1)",
-				borderWidth: 2
+				borderWidth: 0
 			}]
 		},
 		options: {
@@ -643,5 +635,4 @@ function makeChart() {
 			}
 		}
 	});
-	
 }
