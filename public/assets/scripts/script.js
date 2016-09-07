@@ -182,20 +182,16 @@ function ajaxStats($piece, url) {
 function pickMelee() {
 	emptyStyle();
 	
+	
 	var $base = $("#baseStats");
-	
-	var $potA = $("<datalist>").attr("id", "potA");
-	var $potS = $("<datalist>").attr("id", "potS");
-	getPotList("attack", $potA);
-	getPotList("strength", $potS);
-	$base.append($potA, $potS);
-	
 	var $span1 = $("<span>").html("Atk: ");
 	var $atk = $("<input>").attr("id", "baseAtk").val(99);
-	var $potAtk = $('<input id="potAtk" list="potA" size="30" />');
+	var $potAtk = $('<select id="potAtk" />');
 	var $span2 = $("<span>").html("Str: ");
 	var $str = $("<input>").attr("id", "baseStr").val(99);
-	var $potStr = $('<input id="potStr" list="potS" size="30" />');
+	var $potStr = $('<select id="potStr" />');
+	getPotList("attack", $potAtk);
+	getPotList("strength", $potStr);
 	$base.append($span1, $atk, $potAtk, $("<br>"), $span2, $str, $potStr);
 	
 	var $span3 = $("<span>").html("AS");
@@ -269,6 +265,9 @@ function emptyStyle() {
 }
 
 function getPotList(potStyle, $potList) {
+	var $none = $("<option>").text("No Potion");
+	$potList.append($none);
+	
 	$.ajax({
         url: "\/potion\/" + potStyle, 
         method: "GET",
@@ -315,10 +314,11 @@ $("#simulate").click(function() {
 
 function getMeleeAccuracy() {
 	var baseAtk = parseInt($("#baseAtk").val());
-	var potAtk = $("#potAtk").val();
+	var potAtk = $("#potAtk option:selected").text();
 	var percentage = 0;
 	var constant = 0
-	if (potAtk != "") {
+
+	if (potAtk.indexOf("No Potion")) {
 		percentage = parseInt(potAtk.substr(potAtk.search(/([\d]+%)/)));
 		constant = parseInt(potAtk.substr(potAtk.search(/( [\d]+)/)));
 	}
@@ -404,10 +404,10 @@ function getMeleeAccuracy() {
 
 function getMeleeMax() {
 	var baseStr = parseInt($("#baseStr").val());
-	var potStr = $("#potStr").val();
+	var potStr = $("#potStr option:selected").text();
 	var percentage = 0;
 	var constant = 0
-	if (potStr != "") {
+	if (potStr.indexOf("No Potion")) {
 		percentage = parseInt(potStr.substr(potStr.search(/([\d]+%)/)));
 		constant = parseInt(potStr.substr(potStr.search(/( [\d]+)/)));
 	}
@@ -614,6 +614,7 @@ function simulate(num) {
 
 function makeChart(hitCounts) {
 	
+	var interval = parseInt($("#total").find(".ticks").val());
 	var ticks = [];
 	var count = [];
 	var avg = 0;
@@ -627,6 +628,10 @@ function makeChart(hitCounts) {
 		count.push(0);
 	}
 
+	for (i = 0; i < ticks.length; i++) {
+		ticks[i] *= interval;
+	}
+	
 	for (j = 0; j < hitCounts.length; j++) {
 		var h = hitCounts[j]; 
 		var slot = h - begin;
@@ -639,10 +644,12 @@ function makeChart(hitCounts) {
 	var $avg = $("#avg");
 	$avg.empty();
 	var $p1 = $("<p>").html("Total number of simulations: " + hitCounts.length);
-	var $p2 = $("<p>").html("Average ticks to kill: " + avg);
-	$avg.append($p1, $p2);
+	var $p2 = $("<p>").html("Average ticks to kill: " + avg * interval);
+	var $p3 = $("<p>").html("Average weapon hits to kill: " + avg);
+	var $p4 = $("<p>").html("Average seconds to kill: " + avg * interval * 0.6);
+	$avg.append($p1, $p2, $p3, $p4);
 	
-
+	
 	var graph = $("#graph");
 	var g = new Chart(graph, {
 		type: 'bar',

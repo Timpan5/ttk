@@ -109,7 +109,7 @@ app.get(/(potion)/, function (req, res) {
 	}
 	else if (item.length == 3) {
 		var name = decodeURIComponent(item[2]);
-		var query = "SELECT * FROM potion WHERE style=$1";
+		var query = "SELECT * FROM potion WHERE style=$1 ORDER BY percentage ASC";
 		
 		pool.query(query, [name], function(err, result) {
 			var jsonObj = {"data" : result.rows};
