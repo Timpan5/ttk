@@ -298,18 +298,21 @@ function getPotList(potStyle, $potList) {
 
 
 $("#testButton").click(function() {
-	getMeleeAccuracy();
-	getMeleeMax();
-	getDefRoll();
+
+	getMeleeAccuracy().done(function(acc){ //roll
+		getMeleeMax().done(function(max){ //hit
+			getDefRoll().done(function(def){ //roll
+				getHitChance(acc.roll, def.roll).done(function(chance){ //chance
+					simulate(1000, chance.chance, max.hit);
+				});
+			});
+		});
+    });
+	
+
 });
 
-$("#calc").click(function() {
-	getHitChance();
-});
 
-$("#simulate").click(function() {
-	simulate(1000);
-});
 
 //@@@@@@@@@@@@@@@@@
 //@@@@@@@@@@@@@@@@
@@ -393,20 +396,16 @@ function getMeleeAccuracy() {
 
 	var load = {visible, pAcc, style, v, bonus, gear};
 
-	$.ajax({
+	return $.ajax({
         url: "\/calculate\/roll\/melee", 
         method: "POST",
         dataType: "json",
 		data: load
     })
-    .done(function(jsondata){
-		var data = jsondata.roll;
-		$("#attackRoll").html(data);
-
-    })
     .fail(function(jqXHR, textStatus, errorThrown){
         alert( "Request failed: " + errorThrown );
     });
+	
 }
 
 function getMeleeMax() {
@@ -477,16 +476,11 @@ function getMeleeMax() {
 
 	var load = {visible, pStr, style, v, bonus, gear};
 	
-	$.ajax({
+	return $.ajax({
         url: "\/calculate\/hit\/melee", 
         method: "POST",
         dataType: "json",
 		data: load
-    })
-    .done(function(jsondata){
-		var data = jsondata.hit;
-		$("#maxHit").html(data);
-
     })
     .fail(function(jqXHR, textStatus, errorThrown){
         alert( "Request failed: " + errorThrown );
@@ -562,46 +556,32 @@ function getDefRoll() {
 	
 	var load = {visible, pAcc, style, v, bonus, gear};
 
-	$.ajax({
+	return $.ajax({
         url: "\/calculate\/roll\/melee", 
         method: "POST",
         dataType: "json",
 		data: load
     })
-    .done(function(jsondata){
-		var data = jsondata.roll;
-		$("#defRoll").html(data);
-
-    })
     .fail(function(jqXHR, textStatus, errorThrown){
         alert( "Request failed: " + errorThrown );
     });
 }
 
-function getHitChance() {
-	var A = $("#attackRoll").html();
-	var B = $("#defRoll").html();
+function getHitChance(A, B) {
 	var load = {A,B};
 	
-	//alert(JSON.stringify(load));
-	
-	$.ajax({
+	return $.ajax({
         url: "\/calculate\/chance", 
         method: "POST",
         dataType: "json",
 		data: load
     })
-    .done(function(jsondata){
-		var data = jsondata.chance;
-		//alert(data);
-		$("#hitChance").html(data);
-    })
     .fail(function(jqXHR, textStatus, errorThrown){
         alert( "Request failed: " + errorThrown );
     });
 }
 
-function simulate(num) {
+function simulate(num, chance, max) {
 	var hp = parseInt($("#npcHp").val());
 	var count = 0;
 	var results = [];
@@ -611,8 +591,8 @@ function simulate(num) {
 		count = 0;
 		while(current > 0) {
 			var hit = 0;
-			if (Math.random() <= $("#hitChance").html()) {
-				hit = Math.floor(Math.random() * $("#maxHit").html());
+			if (Math.random() <= parseFloat(chance)) {
+				hit = Math.floor(Math.random() * parseInt(max));
 			}
 			current = current - hit;
 			count++;
