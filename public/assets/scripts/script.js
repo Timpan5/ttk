@@ -191,24 +191,24 @@ function pickMelee() {
 	$base.append($potA, $potS);
 	
 	var $span1 = $("<span>").html("Atk: ");
-	var $atk = $("<input>").attr("id", "baseAtk");
+	var $atk = $("<input>").attr("id", "baseAtk").val(99);
 	var $potAtk = $('<input id="potAtk" list="potA" size="30" />');
 	var $span2 = $("<span>").html("Str: ");
-	var $str = $("<input>").attr("id", "baseStr");
+	var $str = $("<input>").attr("id", "baseStr").val(99);
 	var $potStr = $('<input id="potStr" list="potS" size="30" />');
 	$base.append($span1, $atk, $potAtk, $("<br>"), $span2, $str, $potStr);
 	
 	var $span3 = $("<span>").html("AS");
 	var $form = $("<form>");
 	var $span4 = $("<span>").html("Accurate");
-	var $radioAccurate = $('<input type="radio" name="as" id="radioAccurate" />');
+	var $radioAccurate = $('<input type="radio" name="as" id="radioAccurate" />').prop( "checked",true);
 	var $span5 = $("<span>").html("Aggressive");
 	var $radioStrength = $('<input type="radio" name="as" id="radioStrength" />');
 	var $span6 = $("<span>").html("Controlled");
 	var $radioControlled = $('<input type="radio" name="as" id="radioControlled" />');
 	$form.append($span4, $radioAccurate, $span5, $radioStrength, $span6, $radioControlled, $("<br>"));
 	var $span7 = $("<span>").html("St");
-	var $radioStab = $('<input type="radio" name="st" id="radioStab" />');
+	var $radioStab = $('<input type="radio" name="st" id="radioStab" />').prop( "checked",true);
 	var $span8 = $("<span>").html("Sl");
 	var $radioSlash = $('<input type="radio" name="st" id="radioSlash" />');
 	var $span9 = $("<span>").html("Cr");
@@ -333,12 +333,30 @@ function getMeleeAccuracy() {
 	else if($("#radioStrength").is(':checked')) { style = 0; }
 	else { alert("No style"); }
 	
+	
+	var v = 1;
+	if($("#checkVoid").is(':checked')) {
+		v = 1.1;
+	}
+	
+	var gear = 1;
+	
+	if($("#checkSalve").is(':checked')) {
+		gear = 1.2;
+	}
+	else if($("#checkSlay").is(':checked')) {
+		gear = 7/6;
+	}
+	
+	/*
 	var v = 1;
 	if ($("#head").find(".name").val().toLowerCase().indexOf("void") != -1
 		&& $("#chest").find(".name").val().toLowerCase().indexOf("void") != -1
 		&& $("#legs").find(".name").val().toLowerCase().indexOf("void") != -1
 		&& $("#hands").find(".name").val().toLowerCase().indexOf("void") != -1
 		) {v = 1.1;}
+		
+	*/
 	
 	var bonus = 0;
 	if($("#radioStab").is(':checked')) { bonus = $("#total").find(".st").val() || "0"; }
@@ -346,6 +364,7 @@ function getMeleeAccuracy() {
 	else if($("#radioCrush").is(':checked')) { bonus = $("#total").find(".cr").val() || "0"; }
 	else { alert("No equip bonus"); }
 	
+	/*
 	var gear = 1;
 	
 	if($("#checkSlay").is(':checked')) {
@@ -363,6 +382,7 @@ function getMeleeAccuracy() {
 			gear = 7/6;
 		}
 	};
+	*/
 
 	var load = {visible, pAcc, style, v, bonus, gear};
 
@@ -596,6 +616,7 @@ function makeChart(hitCounts) {
 	
 	var ticks = [];
 	var count = [];
+	var avg = 0;
 	
 	hitCounts.sort(function(a, b){return a-b});
 	var begin = parseInt(hitCounts[0]);
@@ -610,16 +631,26 @@ function makeChart(hitCounts) {
 		var h = hitCounts[j]; 
 		var slot = h - begin;
 		count[slot]++;
+		avg += h;
 	}
+	
+	avg = avg / hitCounts.length;
+	
+	var $avg = $("#avg");
+	$avg.empty();
+	var $p1 = $("<p>").html("Total number of simulations: " + hitCounts.length);
+	var $p2 = $("<p>").html("Average ticks to kill: " + avg);
+	$avg.append($p1, $p2);
+	
 
 	var graph = $("#graph");
 	var g = new Chart(graph, {
 		type: 'bar',
 		data: {
-			labels: ticks, //["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+			labels: ticks,
 			datasets: [{
-				label: 'Simulation ends at: ',
-				data: count, //[12, 19, 3, 5, 2, 3],
+				label: "Number of Simulations",
+				data: count,
 				backgroundColor: "rgba(27,212,232,1)",
 				borderColor: "rgba(232,143,27,1)",
 				borderWidth: 0
@@ -630,7 +661,17 @@ function makeChart(hitCounts) {
 				yAxes: [{
 					ticks: {
 						beginAtZero:true
-					}
+					},
+					scaleLabel: {
+                    display: true,
+                    labelString: 'Number of simulations (Higher is better)'
+                  }
+				}],
+				xAxes: [{
+					scaleLabel: {
+                    display: true,
+                    labelString: 'Ticks to kill (Lower is faster)'
+                  }
 				}]
 			}
 		}
