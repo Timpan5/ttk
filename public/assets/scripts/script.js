@@ -213,12 +213,16 @@ function pickMelee() {
 	$("#attackStyle").append($span3, $form);
 	
 	var $span10 = $("<span>").html("P");
-	var $pAccuracy = $("<datalist>").attr("id", "acc");
-	var $pStrength = $("<datalist>").attr("id", "str");
-	var $p1 = $('<input id="p1" list="acc" size="40" />');
-	var $p2 = $('<input id="p2" list="str" size="40" />');
-	$("#prayer").append($span10, $("<br>"), $pAccuracy, $pStrength, $p1, $("<br>"), $p2);
+	//var $pAccuracy = $("<datalist>").attr("id", "acc");
+	//var $pStrength = $("<datalist>").attr("id", "str");
+	var $p1 = $('<select id="p1" />');
+	var $p2 = $('<select id="p2" />');
+	$("#prayer").append($span10, $("<br>"), $p1, $("<br>"), $p2);
 	
+	var $o1 = $("<option>").text("No Atk Prayer");
+	var $o2 = $("<option>").text("No Str Prayer");
+	$p1.append($o1);
+	$p2.append($o2);
 	
 	var style = "melee";
 	$.ajax({
@@ -234,12 +238,12 @@ function pickMelee() {
 			if (data[i].accuracy > 1) {
 				var buff = data[i].name + " (" + data[i]["accuracy"] + ")";
 				$option.text(buff);
-				$pAccuracy.append($option.clone());
+				$p1.append($option.clone());
 			}
 			if (data[i].strength > 1) {
 				var buff = data[i].name + " (" + data[i]["strength"] + ")";
 				$option.text(buff);
-				$pStrength.append($option.clone());
+				$p2.append($option.clone());
 			}
 		}
     })
@@ -324,8 +328,11 @@ function getMeleeAccuracy() {
 	}
 	var visible = Math.floor(baseAtk + baseAtk * percentage / 100) + constant;
 
-	var p1 = $("#p1").val() || "1";
-	var pAcc = parseFloat(p1.substr(p1.search(/([\d]\.?[\d]*)/)));
+	var p1 = $("#p1 option:selected").text();
+	var pAcc = 1;
+	if (p1.indexOf("No Atk Prayer")) {
+		pAcc = parseFloat(p1.substr(p1.search(/([\d]\.?[\d]*)/)));
+	}
 	
 	var style = 0;
 	if($("#radioAccurate").is(':checked')) { style = 3; }
@@ -412,9 +419,12 @@ function getMeleeMax() {
 		constant = parseInt(potStr.substr(potStr.search(/( [\d]+)/)));
 	}
 	var visible = Math.floor(baseStr + baseStr * percentage / 100) + constant;
-
-	var p2 = $("#p2").val() || "1";
-	var pStr = parseFloat(p2.substr(p2.search(/([\d]\.?[\d]*)/)));
+	
+	var p2 = $("#p2 option:selected").text();
+	var pStr = 1;
+	if (p2.indexOf("No Str Prayer")) {
+		pStr = parseFloat(p2.substr(p2.search(/([\d]\.?[\d]*)/)));
+	}
 	
 	var style = 0;
 	if($("#radioAccurate").is(':checked')) { style = 0; }
