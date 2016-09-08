@@ -13,8 +13,10 @@
 	
 	<table id="equipment">
 		<tr>
-			<th>Slot</th> <th>Name</th> <th>Hit Interval</th> <th>Str</th> <th>Range Str</th> <th>Magic Str</th> 
-			<th>Stab</th> <th>Slash</th> <th>Crush</th> <th>Magic</th> <th>Range</th>
+			<th>Slot</th> <th>Name</th> <th>Hit Interval</th> <th>Str</th>   
+			<th>Stab</th> <th>Slash</th> <th>Crush</th> 
+			<th class="equipLeftM">Magic Str</th> <th class="equipRightM">Magic</th> 
+			<th class="equipLeftR">Range Str</th> <th class="equipRightR">Range</th>
 		</tr>
 	</table>
 	
@@ -25,8 +27,6 @@
 		<button onclick="pickRange()"> Ra </button>
 		<button onclick="pickMagic()"> Ma </button>
 		<button id="testButton"> Test </button>
-		<button id="calc"> Calc </button>
-		<button id="simulate"> Simulate </button>
 	</section>
 	
 	<br>
@@ -45,8 +45,8 @@
 	
 	<section id="gear">
 		<form action="">
-			<input id="checkSlay" type="checkbox"> Slay </input> <br>
-			<input id="checkSalve" type="checkbox"> Salve </input> <br>
+			<input id="checkSlay" type="checkbox"> Slayer Helm / Black Mask </input> <br>
+			<input id="checkSalve" type="checkbox"> Salve Amulet </input> <br>
 			<input id="checkVoid" type="checkbox"> Void </input> <br>
 		</form>
 	</section>
@@ -70,15 +70,6 @@
 	
 	<br>
 	
-	<section id="results"> 
-		<section id="rawData">
-			<p id="attackRoll"></p>
-			<p id="maxHit"></p>
-			<p id="defRoll"></p>
-			<p id="hitChance"></p>
-			<div id="hitCounts"></div>
-		</section>
-	</section>
 	
 	<br>
 	

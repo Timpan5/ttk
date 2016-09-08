@@ -5,3 +5,29 @@
 #enemy th,td {
 	text-align: center;
 }
+
+/*
+.equipLeftM {
+	padding-left: 8px;
+	border-left: 4px solid blue;
+}
+
+.equipRightM {
+	padding-right: 8px;
+	border-right: 4px solid blue;
+}
+
+.equipLeftR {
+	padding-left: 8px;
+	border-left: 4px solid green;
+}
+
+.equipRightR {
+	padding-right: 8px;
+	border-right: 4px solid green;
+}
+
+#equipment {
+	border-collapse: collapse;
+}
+*/

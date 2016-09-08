@@ -36,19 +36,19 @@ function makeSlot(symbol, shortName, datalist, url) {
 	if (shortName != "wep")
 		$ticks.children().hide();
 	var $str = $("<td>").append($('<input class="str" size="5">'));
-	var $r = $("<td>").append($('<input class="r" size="5">'));
-	var $m = $("<td>").append($('<input class="m" size="5">'));
 	var $st = $("<td>").append($('<input class="st" size="5">'));
 	var $sl = $("<td>").append($('<input class="sl" size="5">'));
 	var $cr = $("<td>").append($('<input class="cr" size="5">'));
-	var $ma = $("<td>").append($('<input class="ma" size="5">'));
-	var $ra = $("<td>").append($('<input class="ra" size="5">'));
+	var $m = $('<td class="equipLeftM">').append($('<input class="m" size="5">'));
+	var $ma = $('<td class="equipRightM">').append($('<input class="ma" size="5">'));
+	var $r = $('<td class="equipLeftR">').append($('<input class="r" size="5">'));
+	var $ra = $('<td class="equipRightR">').append($('<input class="ra" size="5">'));
 
 	$name.find(".name").change(function() {
 		ajaxStats($tr, url);
 	}); 
 	
-	$tr.append($symbol, $name, $ticks, $str, $r, $m, $st, $sl, $cr, $ma, $ra);
+	$tr.append($symbol, $name, $ticks, $str, $st, $sl, $cr, $m, $ma, $r, $ra);
 	$("#equipment").append($tr); //hardcoded table id
 }
 
@@ -58,15 +58,15 @@ function makeTotal() {
 	var $name = $("<td>").html("<b>Total</b>");
 	var $ticks = $("<td>").append($('<input class="ticks" size="5">'));
 	var $str = $("<td>").append($('<input class="str" size="5">'));
-	var $r = $("<td>").append($('<input class="r" size="5">'));
-	var $m = $("<td>").append($('<input class="m" size="5">'));
 	var $st = $("<td>").append($('<input class="st" size="5">'));
 	var $sl = $("<td>").append($('<input class="sl" size="5">'));
 	var $cr = $("<td>").append($('<input class="cr" size="5">'));
-	var $ma = $("<td>").append($('<input class="ma" size="5">'));
-	var $ra = $("<td>").append($('<input class="ra" size="5">'));
+	var $m = $('<td class="equipLeftM">').append($('<input class="m" size="5">'));
+	var $ma = $('<td class="equipRightM">').append($('<input class="ma" size="5">'));
+	var $r = $('<td class="equipLeftR">').append($('<input class="r" size="5">'));
+	var $ra = $('<td class="equipRightR">').append($('<input class="ra" size="5">'));
 	
-	$tr.append($symbol, $name, $ticks, $str, $r, $m, $st, $sl, $cr, $ma, $ra);
+	$tr.append($symbol, $name, $ticks, $str, $st, $sl, $cr, $m, $ma, $r, $ra);
 	$("#equipment").append($tr); //hardcoded table id
 	
 	updateTotal();
@@ -182,7 +182,6 @@ function ajaxStats($piece, url) {
 function pickMelee() {
 	emptyStyle();
 	
-	
 	var $base = $("#baseStats");
 	var $span1 = $("<span>").html("Atk: ");
 	var $atk = $("<input>").attr("id", "baseAtk").val(99);
@@ -213,8 +212,6 @@ function pickMelee() {
 	$("#attackStyle").append($span3, $form);
 	
 	var $span10 = $("<span>").html("P");
-	//var $pAccuracy = $("<datalist>").attr("id", "acc");
-	//var $pStrength = $("<datalist>").attr("id", "str");
 	var $p1 = $('<select id="p1" />');
 	var $p2 = $('<select id="p2" />');
 	$("#prayer").append($span10, $("<br>"), $p1, $("<br>"), $p2);
@@ -256,6 +253,51 @@ function pickMelee() {
 
 function pickRange() {
 	emptyStyle();
+	
+	var $base = $("#baseStats");
+	var $span1 = $("<span>").html("Range: ");
+	var $range = $("<input>").attr("id", "baseRange").val(99);
+	var $potRange = $('<select id="potRange" />');
+	getPotList("range", $potRange);
+	$base.append($span1, $range, $potRange);
+	
+	var $span2 = $("<span>").html("AS");
+	var $form = $("<form>");
+	var $span3 = $("<span>").html("Accurate");
+	var $radioAccurate = $('<input type="radio" name="as" id="radioAccurate" />').prop( "checked",true);
+	var $span4 = $("<span>").html("Rapid");
+	var $radioRapid = $('<input type="radio" name="as" id="radioRapid" />');
+	var $span5 = $("<span>").html("Longrange");
+	var $radioLongrange = $('<input type="radio" name="as" id="radioLongrange" />');
+	$form.append($span2, $("<br>"), $span3, $radioAccurate, $span4, $radioRapid, $span5, $radioLongrange, $("<br>"));
+	$("#attackStyle").append($form);
+	
+	var $span6 = $("<span>").html("P");
+	var $p1 = $('<select id="p1" />');
+	$("#prayer").append($span6, $("<br>"), $p1);
+	
+	var $o1 = $("<option>").text("No Prayer");
+	$p1.append($o1);
+	
+	var style = "range";
+	$.ajax({
+        url: "\/prayer\/" + style, 
+        method: "GET",
+        dataType: "json"
+    })
+    .done(function(jsondata){
+		var data = jsondata.data;
+		for (i = 0; i < data.length; i++) {
+			var $option = $("<option>");
+			var buff = data[i].name + " (" + data[i]["accuracy"] + ")";
+			$option.text(buff);
+			$p1.append($option);
+		}
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
+	
 }
 
 function pickMagic() {
@@ -298,10 +340,11 @@ function getPotList(potStyle, $potList) {
 
 
 $("#testButton").click(function() {
-
-	getMeleeAccuracy().done(function(acc){ //roll
-		getMeleeMax().done(function(max){ //hit
-			getDefRoll().done(function(def){ //roll
+	
+	
+	getRangeAccuracy().done(function(acc){ //roll
+		getRangeMax().done(function(max){ //hit
+			getDefRoll("range").done(function(def){ //roll
 				getHitChance(acc.roll, def.roll).done(function(chance){ //chance
 					simulate(1000, chance.chance, max.hit);
 				});
@@ -309,7 +352,20 @@ $("#testButton").click(function() {
 		});
     });
 	
-
+	
+	
+	/*
+	getMeleeAccuracy().done(function(acc){ //roll
+		getMeleeMax().done(function(max){ //hit
+			getDefRoll("melee").done(function(def){ //roll
+				getHitChance(acc.roll, def.roll).done(function(chance){ //chance
+					simulate(1000, chance.chance, max.hit);
+				});
+			});
+		});
+    });
+	*/
+	
 });
 
 
@@ -408,6 +464,61 @@ function getMeleeAccuracy() {
 	
 }
 
+function getRangeAccuracy() {
+	var baseRange = parseInt($("#baseRange").val());
+	var potRange = $("#potRange option:selected").text();
+	var percentage = 0;
+	var constant = 0
+
+	if (potRange.indexOf("No Potion")) {
+		percentage = parseInt(potRange.substr(potRange.search(/([\d]+%)/)));
+		constant = parseInt(potRange.substr(potRange.search(/( [\d]+)/)));
+	}
+	var visible = Math.floor(baseRange + baseRange * percentage / 100) + constant;
+
+	var p1 = $("#p1 option:selected").text();
+	var pAcc = 1;
+	if (p1.indexOf("No Prayer")) {
+		pAcc = parseFloat(p1.substr(p1.search(/([\d]\.?[\d]*)/)));
+	}
+	
+	var style = 0;
+	if($("#radioAccurate").is(':checked')) { style = 3; }
+    else if($("#radioRapid").is(':checked')) { style = 0; }
+	else if($("#radioLongrange").is(':checked')) { style = 0; }
+	else { alert("No style"); }
+	
+	
+	var v = 1;
+	if($("#checkVoid").is(':checked')) {
+		v = 1.1;
+	}
+	
+	var gear = 1;
+	
+	if($("#checkSalve").is(':checked')) {
+		gear = 1.2;
+	}
+	else if($("#checkSlay").is(':checked')) {
+		gear = 1.15;
+	}
+	
+	var bonus = $("#total").find(".ra").val() || "0";
+	
+	var load = {visible, pAcc, style, v, bonus, gear};
+
+	
+	return $.ajax({
+        url: "\/calculate\/roll\/melee", 
+        method: "POST",
+        dataType: "json",
+		data: load
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
+}
+
 function getMeleeMax() {
 	var baseStr = parseInt($("#baseStr").val());
 	var potStr = $("#potStr option:selected").text();
@@ -487,6 +598,59 @@ function getMeleeMax() {
     });	
 }
 
+function getRangeMax() {
+	var baseRange = parseInt($("#baseRange").val());
+	var potRange = $("#potRange option:selected").text();
+	var percentage = 0;
+	var constant = 0
+	if (potRange.indexOf("No Potion")) {
+		percentage = parseInt(potRange.substr(potRange.search(/([\d]+%)/)));
+		constant = parseInt(potRange.substr(potRange.search(/( [\d]+)/)));
+	}
+	var visible = Math.floor(baseRange + baseRange * percentage / 100) + constant;
+	
+	var p1 = $("#p1 option:selected").text();
+	var pStr = 1;
+	if (p1.indexOf("No Prayer")) {
+		pStr = parseFloat(p1.substr(p1.search(/([\d]\.?[\d]*)/)));
+	}
+	
+	var style = 0;
+	if($("#radioAccurate").is(':checked')) { style = 3; }
+    else if($("#radioRapid").is(':checked')) { style = 0; }
+	else if($("#radioLongrange").is(':checked')) { style = 0; }
+	else { alert("No style"); }
+	
+	var v = 1;
+	if($("#checkVoid").is(':checked')) {
+		v = 1.1;
+	}
+
+	var bonus = $("#total").find(".r").val() || 0;
+	
+	var gear = 1;
+	
+	if($("#checkSalve").is(':checked')) {
+		gear = 1.2;
+	}
+	else if($("#checkSlay").is(':checked')) {
+		gear = 1.15;
+	}
+
+	var load = {visible, pStr, style, v, bonus, gear};
+	
+	return $.ajax({
+        url: "\/calculate\/hit\/range", 
+        method: "POST",
+        dataType: "json",
+		data: load
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });	
+	
+}
+
 function loadNpcList() {
 	var $section = $("#enemy");
 	var $datalist = $('<datalist id="npcList"/>');
@@ -539,7 +703,7 @@ function getNpcStats() {
 	}
 }
 
-function getDefRoll() {
+function getDefRoll(combat) {
 	
 	var visible = $("#npcDef").val();
 	
@@ -549,10 +713,21 @@ function getDefRoll() {
 	var gear = 1;
 	
 	var bonus = 0;
-	if($("#radioStab").is(':checked')) { bonus = $("#npcSl").val() || "0"; }
-    else if($("#radioSlash").is(':checked')) { bonus = $("#npcSl").val() || "0"; }
-	else if($("#radioCrush").is(':checked')) { bonus = $("#npcCr").val() || "0"; }
-	else { alert("No equip bonus"); }
+
+	
+	if (!combat.indexOf("melee")) {
+		if($("#radioStab").is(':checked')) { bonus = $("#npcSl").val() || "0"; }
+		else if($("#radioSlash").is(':checked')) { bonus = $("#npcSl").val() || "0"; }
+		else if($("#radioCrush").is(':checked')) { bonus = $("#npcCr").val() || "0"; }
+		else { alert("No equip bonus"); }
+	}
+	
+	
+	else if (!combat.indexOf("range")) {
+		bonus = $("#npcRa").val() || "0";
+	}
+	
+	
 	
 	var load = {visible, pAcc, style, v, bonus, gear};
 
@@ -585,7 +760,7 @@ function simulate(num, chance, max) {
 	var hp = parseInt($("#npcHp").val());
 	var count = 0;
 	var results = [];
-	
+
 	for (i = 0; i < num; i++) {
 		var current = hp;
 		count = 0;
@@ -599,6 +774,13 @@ function simulate(num, chance, max) {
 		}
 		results.push(count);
 	}
+	
+	var $avg = $("#avg");
+	$avg.empty();
+	var $p1 = $("<p>").html("Max Hit: " + max);
+	var $p2 = $("<p>").html("Hit Chance: " + chance);
+	$avg.append($p1, $p2);
+	
 	makeChart(results);
 }
 
@@ -608,6 +790,12 @@ function makeChart(hitCounts) {
 	var ticks = [];
 	var count = [];
 	var avg = 0;
+	
+	if ($("#radioRapid").length) {
+		if($("#radioRapid").is(':checked')) {
+			interval--;
+		}
+	}
 	
 	hitCounts.sort(function(a, b){return a-b});
 	var begin = parseInt(hitCounts[0]);
@@ -632,7 +820,6 @@ function makeChart(hitCounts) {
 	avg = avg / hitCounts.length;
 	
 	var $avg = $("#avg");
-	$avg.empty();
 	var $p1 = $("<p>").html("Total number of simulations: " + hitCounts.length);
 	var $p2 = $("<p>").html("Average ticks to kill: " + avg * interval);
 	var $p3 = $("<p>").html("Average weapon hits to kill: " + avg);

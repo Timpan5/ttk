@@ -144,6 +144,13 @@ app.post("/calculate/hit/melee", function (req, res) {
 	res.send({hit});
 });
 
+app.post("/calculate/hit/range", function (req, res) {
+	var input = req.body;
+	console.log(input);
+	var hit = maxHitRange(parseInt(input.visible), parseFloat(input.pStr), parseInt(input.style), parseFloat(input.v), parseInt(input.bonus), parseFloat(input.gear));
+	res.send({hit});
+});
+
 app.get(/(npc)/, function(req, res) {
 	var base = req.path;
 	var item = base.split("\/");
@@ -304,6 +311,26 @@ function maxHit(visible, prayer, stance, v, B, gear) {
 	return maxHit;
 }
 
+function maxHitRange(visible, prayer, stance, v, B, gear) {
+	var step1 = Math.floor(visible * prayer);
+	var step2 = step1 + stance + 8;
+	var A = Math.floor(Math.floor(step2 * v) * v);
+
+	var maxHitBase = Math.floor(0.5 + A * (B+64)/640);
+	var step3 = Math.floor(maxHitBase * gear);
+	
+	var special = 1;
+	var step4 = Math.floor(step3 * special);
+	
+	var pvp = 1;
+	var step5 = Math.floor(step4 * pvp);
+	
+	var weaponEffect = 1;
+	var maxHit = Math.floor(step5 * weaponEffect);
+	
+	return maxHit;
+}
+
 function hitChance(rollA, rollD) {
 	var chance = 0;
 	if (rollA > rollD) {
@@ -357,7 +384,7 @@ function getStats(id, title, page) {
 					});
 					
 					//hardcoded table name
-					pool.query('INSERT INTO shield VALUES ($1, $2, $3, $4)', [id, title, stats, speed], function(err) {console.log("ERROR " + title);});
+					pool.query('INSERT INTO weapons_melee VALUES ($1, $2, $3, $4)', [id, title, stats, speed], function(err) {console.log("ERROR " + title + " " + err.message);});
 					console.log(id);
 					/*
 					console.log(title);
@@ -383,8 +410,9 @@ function getStats(id, title, page) {
 	//create table feet(id integer, name text, stats text[], speed integer, primary key(id));
 	//create table ring(id integer, name text, stats text[], speed integer, primary key(id));
 
+	
 	/*
-	rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Shield+slot+items&limit=9999'}, function (error, res, body) {
+	rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Ranged+weapons&limit=9999'}, function (error, res, body) {
 		if (!error && res.statusCode == 200) {
 			
 			var base = JSON.parse(body).basepath;
@@ -398,6 +426,8 @@ function getStats(id, title, page) {
 		}
 	});
 	*/
+	
+	
 
 	/*
 		var myVar = setInterval(function() {
