@@ -78,6 +78,7 @@ const sumSlots = [
 	".st",
 	".sl",
 	".cr",
+	".m",
 	".ma",
 	".ra"
 ];
@@ -302,6 +303,74 @@ function pickRange() {
 
 function pickMagic() {
 	emptyStyle();
+	
+	var $base = $("#baseStats");
+	var $span1 = $("<span>").html("Magic: ");
+	var $magic = $("<input>").attr("id", "baseMagic").val(99);
+	var $potMagic = $('<select id="potMagic" />');
+	getPotList("magic", $potMagic);
+	$base.append($span1, $magic, $potMagic);
+	
+	var $span2 = $("<span>").html("Spell Base Damage: ");
+	var $spell = $('<select id="spell" />');
+	
+	var $wepSpell = $('<select id="wepSpell" />');
+	var $s1 = $("<option>").text("Weapon Spells");
+	var $s2 = $("<option>").text("Trident");
+	var $s3 = $("<option>").text("Swamp Trident");
+	var $s4 = $("<option>").text("Black Salamander");
+	$wepSpell.append($s1, $s2, $s3, $s4);
+	
+	var $maxHit = $('<input id="spellMax" size="5" />');
+	$("#attackStyle").append($span2, $spell, $wepSpell, $maxHit);
+	
+	var $noSpell = $("<option>").text("Casted Spells");
+	$spell.append($noSpell);
+	
+	$.ajax({
+        url: "\/spells", 
+        method: "GET",
+        dataType: "json"
+    })
+    .done(function(jsondata){
+		var data = jsondata.data;
+		for (i = 0; i < data.length; i++) {
+			var $option = $("<option>");
+			var spell = data[i].name + " (" + data[i].max + ")";
+			$option.text(spell);
+			$spell.append($option);
+		}
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
+	
+	var $span3 = $("<span>").html("P");
+	var $p1 = $('<select id="p1" />');
+	$("#prayer").append($span3, $("<br>"), $p1);
+	
+	var $o1 = $("<option>").text("No Prayer");
+	$p1.append($o1);
+	
+	var style = "magic";
+	$.ajax({
+        url: "\/prayer\/" + style, 
+        method: "GET",
+        dataType: "json"
+    })
+    .done(function(jsondata){
+		var data = jsondata.data;
+		for (i = 0; i < data.length; i++) {
+			var $option = $("<option>");
+			var buff = data[i].name + " (" + data[i]["accuracy"] + ")";
+			$option.text(buff);
+			$p1.append($option);
+		}
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
+	
 }
 
 function emptyStyle() {
@@ -340,8 +409,21 @@ function getPotList(potStyle, $potList) {
 
 
 $("#testButton").click(function() {
+
 	
 	
+	getMagicAccuracy().done(function(acc){ //roll
+		getDefRoll("magic").done(function(def){ //roll
+			getHitChance(acc.roll, def.roll).done(function(chance){ //chance
+				simulate(1000, chance.chance, getMagicMax());
+			});
+		});
+    });
+	
+	
+	
+	
+	/*
 	getRangeAccuracy().done(function(acc){ //roll
 		getRangeMax().done(function(max){ //hit
 			getDefRoll("range").done(function(def){ //roll
@@ -351,6 +433,7 @@ $("#testButton").click(function() {
 			});
 		});
     });
+	*/
 	
 	
 	
@@ -519,6 +602,61 @@ function getRangeAccuracy() {
     });
 }
 
+function getMagicAccuracy() {
+	var baseMagic = parseInt($("#baseMagic").val());
+	var potMagic = $("#potMagic option:selected").text();
+	var percentage = 0;
+	var constant = 0
+
+	if (potMagic.indexOf("No Potion")) {
+		percentage = parseInt(potMagic.substr(potMagic.search(/([\d]+%)/)));
+		constant = parseInt(potMagic.substr(potMagic.search(/( [\d]+)/)));
+	}
+	var visible = Math.floor(baseMagic + baseMagic * percentage / 100) + constant;
+
+	var p1 = $("#p1 option:selected").text();
+	var pAcc = 1;
+	if (p1.indexOf("No Prayer")) {
+		pAcc = parseFloat(p1.substr(p1.search(/([\d]\.?[\d]*)/)));
+	}
+	
+	var style = 0;
+	var b = $("#wepSpell option:selected").text();
+	if (!b.indexOf("Trident") || !b.indexOf("Swamp Trident")) {
+		style = 3;
+	}
+	
+	var v = 1;
+	if($("#checkVoid").is(':checked')) {
+		v = 1.3;
+	}
+	
+	var gear = 1;
+	
+	if($("#checkSalve").is(':checked')) {
+		gear = 1.2;
+	}
+	else if($("#checkSlay").is(':checked')) {
+		gear = 1.15;
+	}
+	
+	var bonus = $("#total").find(".ma").val() || "0";
+	
+	var load = {visible, pAcc, style, v, bonus, gear};
+
+	return $.ajax({
+        url: "\/calculate\/roll\/melee", 
+        method: "POST",
+        dataType: "json",
+		data: load
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
+
+}
+
+
 function getMeleeMax() {
 	var baseStr = parseInt($("#baseStr").val());
 	var potStr = $("#potStr option:selected").text();
@@ -651,6 +789,56 @@ function getRangeMax() {
 	
 }
 
+function getMagicMax() {
+	
+	var spell = $("#spell option:selected").text();
+	if (spell.indexOf("Casted Spells")) {
+		$("#spellMax").val(parseInt(spell.match(/([\d]+)/)));
+	}
+	
+	var baseMagic = parseInt($("#baseMagic").val());
+	var potMagic = $("#potMagic option:selected").text();
+	var percentage = 0;
+	var constant = 0
+
+	if (potMagic.indexOf("No Potion")) {
+		percentage = parseInt(potMagic.substr(potMagic.search(/([\d]+%)/)));
+		constant = parseInt(potMagic.substr(potMagic.search(/( [\d]+)/)));
+	}
+	var visible = Math.floor(baseMagic + baseMagic * percentage / 100) + constant;
+
+	var a = $("#spell option:selected").text();
+	if (!a.indexOf("Magic dart")) {
+		$("#spellMax").val(10 + Math.floor(visible / 10));
+	}
+
+	var b = $("#wepSpell option:selected").text();
+	if (!b.indexOf("Trident")) {
+		$("#spellMax").val(Math.floor(visible / 3) - 5);
+	}
+	
+	if (!b.indexOf("Swamp Trident")) {
+		$("#spellMax").val(Math.floor(visible / 3) - 2);
+	}
+	
+	if (!b.indexOf("Black Salamander")) {
+		$("#spellMax").val(Math.floor(0.5 + visible * (156/640)));
+	}
+	
+	var str = $("#total").find(".m").val();
+	var bonus = 1 + (parseInt(str) / 100 || 0);
+	var hit = Math.floor($("#spellMax").val() * bonus);
+	
+	if($("#checkSalve").is(':checked')) {
+		hit = Math.floor(hit * 1.2);
+	}
+	else if($("#checkSlay").is(':checked')) {
+		hit = Math.floor(hit * 1.15);
+	}
+	
+	return hit;
+}
+
 function loadNpcList() {
 	var $section = $("#enemy");
 	var $datalist = $('<datalist id="npcList"/>');
@@ -722,12 +910,14 @@ function getDefRoll(combat) {
 		else { alert("No equip bonus"); }
 	}
 	
-	
 	else if (!combat.indexOf("range")) {
 		bonus = $("#npcRa").val() || "0";
 	}
 	
-	
+	else if (!combat.indexOf("magic")) {
+		visible = $("#npcM").val();
+		bonus = $("#npcMa").val() || "0";
+	}
 	
 	var load = {visible, pAcc, style, v, bonus, gear};
 
@@ -797,6 +987,14 @@ function makeChart(hitCounts) {
 		}
 	}
 	
+	if ($("#spell").length) {
+		interval = 5;
+		var b = $("#wepSpell option:selected").text();
+		if (!b.indexOf("Trident") || !b.indexOf("Swamp Trident")) {
+			interval = 4;
+		}
+	}
+	
 	hitCounts.sort(function(a, b){return a-b});
 	var begin = parseInt(hitCounts[0]);
 	var end = parseInt(hitCounts.slice(-1)[0]);
@@ -822,12 +1020,15 @@ function makeChart(hitCounts) {
 	var $avg = $("#avg");
 	var $p1 = $("<p>").html("Total number of simulations: " + hitCounts.length);
 	var $p2 = $("<p>").html("Average ticks to kill: " + avg * interval);
-	var $p3 = $("<p>").html("Average weapon hits to kill: " + avg);
+	var $p3 = $("<p>").html("Average number of attacks to kill: " + avg);
 	var $p4 = $("<p>").html("Average seconds to kill: " + avg * interval * 0.6);
 	$avg.append($p1, $p2, $p3, $p4);
 	
 	
-	var graph = $("#graph");
+	$("#graph").empty();
+	var graph = $("<canvas>");
+	$("#graph").append(graph);
+	
 	var g = new Chart(graph, {
 		type: 'bar',
 		data: {

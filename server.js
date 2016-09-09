@@ -203,6 +203,22 @@ app.post("/calculate/chance", function (req, res) {
 	res.send({chance});
 });
 
+app.get("/spells", function(req, res) {
+		var query = "SELECT * FROM spell";
+		
+		pool.query(query, function(err, result) {
+			var jsonObj = {"data" : result.rows};
+			if (!result.rows.length) {
+				res.statusMessage = "Item not found";
+				res.status(400).end();
+			}
+			else {
+				res.send(jsonObj);
+			}
+		});
+});
+
+
 app.get("*", function(req, res) {
 	console.log("*: " + req.path);
 });
@@ -384,7 +400,7 @@ function getStats(id, title, page) {
 					});
 					
 					//hardcoded table name
-					pool.query('INSERT INTO weapons_melee VALUES ($1, $2, $3, $4)', [id, title, stats, speed], function(err) {console.log("ERROR " + title + " " + err.message);});
+					pool.query('INSERT INTO weapons_melee VALUES ($1, $2, $3, $4)', [id, title, stats, speed], function(err) {console.log("ERROR " + title);});
 					console.log(id);
 					/*
 					console.log(title);
@@ -412,7 +428,7 @@ function getStats(id, title, page) {
 
 	
 	/*
-	rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Ranged+weapons&limit=9999'}, function (error, res, body) {
+	rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Magic+weapons&limit=9999'}, function (error, res, body) {
 		if (!error && res.statusCode == 200) {
 			
 			var base = JSON.parse(body).basepath;
@@ -426,6 +442,7 @@ function getStats(id, title, page) {
 		}
 	});
 	*/
+	
 	
 	
 
