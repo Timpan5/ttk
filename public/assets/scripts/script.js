@@ -182,7 +182,9 @@ function ajaxStats($piece, url) {
 
 function pickMelee() {
 	emptyStyle();
-	
+	$("#sim").off();
+	$("#sim").click(simulateMelee);
+
 	var $base = $("#baseStats");
 	var $span1 = $("<span>").html("Atk: ");
 	var $atk = $("<input>").attr("id", "baseAtk").val(99);
@@ -254,6 +256,8 @@ function pickMelee() {
 
 function pickRange() {
 	emptyStyle();
+	$("#sim").off();
+	$("#sim").click(simulateRange);
 	
 	var $base = $("#baseStats");
 	var $span1 = $("<span>").html("Range: ");
@@ -303,6 +307,8 @@ function pickRange() {
 
 function pickMagic() {
 	emptyStyle();
+	$("#sim").off();
+	$("#sim").click(simulateMagic);
 	
 	var $base = $("#baseStats");
 	var $span1 = $("<span>").html("Magic: ");
@@ -407,37 +413,17 @@ function getPotList(potStyle, $potList) {
 //@@@@@@@@@@@@@@@@
 
 
-
+/*
 $("#testButton").click(function() {
 
-	
-	
-	getMagicAccuracy().done(function(acc){ //roll
-		getDefRoll("magic").done(function(def){ //roll
-			getHitChance(acc.roll, def.roll).done(function(chance){ //chance
-				simulate(1000, chance.chance, getMagicMax());
-			});
-		});
-    });
+
 	
 	
 	
-	
-	/*
-	getRangeAccuracy().done(function(acc){ //roll
-		getRangeMax().done(function(max){ //hit
-			getDefRoll("range").done(function(def){ //roll
-				getHitChance(acc.roll, def.roll).done(function(chance){ //chance
-					simulate(1000, chance.chance, max.hit);
-				});
-			});
-		});
-    });
-	*/
-	
-	
-	
-	/*
+});
+*/
+
+function simulateMelee() {
 	getMeleeAccuracy().done(function(acc){ //roll
 		getMeleeMax().done(function(max){ //hit
 			getDefRoll("melee").done(function(def){ //roll
@@ -447,9 +433,31 @@ $("#testButton").click(function() {
 			});
 		});
     });
-	*/
-	
-});
+}
+
+function simulateRange() {
+	getRangeAccuracy().done(function(acc){ //roll
+		getRangeMax().done(function(max){ //hit
+			getDefRoll("range").done(function(def){ //roll
+				getHitChance(acc.roll, def.roll).done(function(chance){ //chance
+					simulate(1000, chance.chance, max.hit);
+				});
+			});
+		});
+    });
+}
+
+
+function simulateMagic() {
+	getMagicAccuracy().done(function(acc){ //roll
+		getDefRoll("magic").done(function(def){ //roll
+			getHitChance(acc.roll, def.roll).done(function(chance){ //chance
+				simulate(1000, chance.chance, getMagicMax());
+			});
+		});
+    });
+}
+
 
 
 
