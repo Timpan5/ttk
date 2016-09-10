@@ -12,6 +12,7 @@ var rr = require("request");
 
 //Connect to PSQL database and establish client pool
 //URL gets reset when powershell closes
+//$env:DATABASE_URL = "postgres://trrfizoisrjhci:n-Zxst0BRii6nGB1h2oQ4OioM8@ec2-54-225-90-198.compute-1.amazonaws.com:5432/dspf3s3sfi2d6"
 const Pool = require('pg-pool');
 var pgConfig = process.env.DATABASE_URL.split(":");
 const config = {

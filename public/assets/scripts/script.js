@@ -250,8 +250,6 @@ function pickMelee() {
     .fail(function(jqXHR, textStatus, errorThrown){
         alert( "Request failed: " + errorThrown );
     });
-	
-	
 }
 
 function pickRange() {
@@ -408,21 +406,6 @@ function getPotList(potStyle, $potList) {
     });
 }
 
-//@@@@@@@@@@@@@@@@
-//@@@@@@@@@@@@@@@@
-//@@@@@@@@@@@@@@@@
-
-
-/*
-$("#testButton").click(function() {
-
-
-	
-	
-	
-});
-*/
-
 function simulateMelee() {
 	getMeleeAccuracy().done(function(acc){ //roll
 		getMeleeMax().done(function(max){ //hit
@@ -459,24 +442,34 @@ function simulateMagic() {
 }
 
 
+function calculateVisible(base, boost) {
+	var p = parseInt(boost.substr(boost.search(/([\d]+%)/)));
+	var c = parseInt(boost.substr(boost.search(/( [\d]+)/)));
+	return (Math.floor(base + base * p / 100) + c);
+}
 
 
-//@@@@@@@@@@@@@@@@@
-//@@@@@@@@@@@@@@@@
-//@@@@@@@@@@@@@@@@
 
+function calculateRoll(load) {
+	return $.ajax({
+        url: "\/calculate\/roll\/melee", 
+        method: "POST",
+        dataType: "json",
+		data: load
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
+}
 
 function getMeleeAccuracy() {
-	var baseAtk = parseInt($("#baseAtk").val());
+	var visible = parseInt($("#baseAtk").val());
 	var potAtk = $("#potAtk option:selected").text();
-	var percentage = 0;
-	var constant = 0
 
 	if (potAtk.indexOf("No Potion")) {
-		percentage = parseInt(potAtk.substr(potAtk.search(/([\d]+%)/)));
-		constant = parseInt(potAtk.substr(potAtk.search(/( [\d]+)/)));
+		visible = calculateVisible(visible, potAtk);
 	}
-	var visible = Math.floor(baseAtk + baseAtk * percentage / 100) + constant;
+	
 
 	var p1 = $("#p1 option:selected").text();
 	var pAcc = 1;
@@ -505,67 +498,25 @@ function getMeleeAccuracy() {
 		gear = 7/6;
 	}
 	
-	/*
-	var v = 1;
-	if ($("#head").find(".name").val().toLowerCase().indexOf("void") != -1
-		&& $("#chest").find(".name").val().toLowerCase().indexOf("void") != -1
-		&& $("#legs").find(".name").val().toLowerCase().indexOf("void") != -1
-		&& $("#hands").find(".name").val().toLowerCase().indexOf("void") != -1
-		) {v = 1.1;}
-		
-	*/
-	
 	var bonus = 0;
 	if($("#radioStab").is(':checked')) { bonus = $("#total").find(".st").val() || "0"; }
     else if($("#radioSlash").is(':checked')) { bonus = $("#total").find(".sl").val() || "0"; }
 	else if($("#radioCrush").is(':checked')) { bonus = $("#total").find(".cr").val() || "0"; }
 	else { alert("No equip bonus"); }
-	
-	/*
-	var gear = 1;
-	
-	if($("#checkSlay").is(':checked')) {
-		if ($("#head").find(".name").val().toLowerCase().indexOf("slayer") != -1
-		 || $("#head").find(".name").val().toLowerCase().indexOf("black mask") != -1) {
-			gear = 7/6;
-		}
-	};
-	
-	if($("#checkSalve").is(':checked')) {
-		if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet (e)") != -1) {
-			gear = 1.2;
-		}
-		else if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet") != -1) {
-			gear = 7/6;
-		}
-	};
-	*/
 
 	var load = {visible, pAcc, style, v, bonus, gear};
 
-	return $.ajax({
-        url: "\/calculate\/roll\/melee", 
-        method: "POST",
-        dataType: "json",
-		data: load
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-        alert( "Request failed: " + errorThrown );
-    });
+	return calculateRoll(load);
 	
 }
 
 function getRangeAccuracy() {
-	var baseRange = parseInt($("#baseRange").val());
+	var visible = parseInt($("#baseRange").val());
 	var potRange = $("#potRange option:selected").text();
-	var percentage = 0;
-	var constant = 0
 
 	if (potRange.indexOf("No Potion")) {
-		percentage = parseInt(potRange.substr(potRange.search(/([\d]+%)/)));
-		constant = parseInt(potRange.substr(potRange.search(/( [\d]+)/)));
+		visible = calculateVisible(visible, potRange);
 	}
-	var visible = Math.floor(baseRange + baseRange * percentage / 100) + constant;
 
 	var p1 = $("#p1 option:selected").text();
 	var pAcc = 1;
@@ -599,28 +550,17 @@ function getRangeAccuracy() {
 	var load = {visible, pAcc, style, v, bonus, gear};
 
 	
-	return $.ajax({
-        url: "\/calculate\/roll\/melee", 
-        method: "POST",
-        dataType: "json",
-		data: load
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-        alert( "Request failed: " + errorThrown );
-    });
+	return calculateRoll(load);
 }
 
 function getMagicAccuracy() {
-	var baseMagic = parseInt($("#baseMagic").val());
+	var visible = parseInt($("#baseMagic").val());
 	var potMagic = $("#potMagic option:selected").text();
-	var percentage = 0;
-	var constant = 0
 
 	if (potMagic.indexOf("No Potion")) {
-		percentage = parseInt(potMagic.substr(potMagic.search(/([\d]+%)/)));
-		constant = parseInt(potMagic.substr(potMagic.search(/( [\d]+)/)));
+		visible = calculateVisible(visible, potMagic);
 	}
-	var visible = Math.floor(baseMagic + baseMagic * percentage / 100) + constant;
+	
 
 	var p1 = $("#p1 option:selected").text();
 	var pAcc = 1;
@@ -652,29 +592,19 @@ function getMagicAccuracy() {
 	
 	var load = {visible, pAcc, style, v, bonus, gear};
 
-	return $.ajax({
-        url: "\/calculate\/roll\/melee", 
-        method: "POST",
-        dataType: "json",
-		data: load
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-        alert( "Request failed: " + errorThrown );
-    });
+	return calculateRoll(load);
 
 }
 
 
 function getMeleeMax() {
-	var baseStr = parseInt($("#baseStr").val());
+	var visible = parseInt($("#baseStr").val());
 	var potStr = $("#potStr option:selected").text();
-	var percentage = 0;
-	var constant = 0
+
 	if (potStr.indexOf("No Potion")) {
-		percentage = parseInt(potStr.substr(potStr.search(/([\d]+%)/)));
-		constant = parseInt(potStr.substr(potStr.search(/( [\d]+)/)));
+		visible = calculateVisible(visible, potStr);
 	}
-	var visible = Math.floor(baseStr + baseStr * percentage / 100) + constant;
+	
 	
 	var p2 = $("#p2 option:selected").text();
 	var pStr = 1;
@@ -693,14 +623,6 @@ function getMeleeMax() {
 		v = 1.1;
 	}
 	
-	/*
-	if ($("#head").find(".name").val().toLowerCase().indexOf("void") != -1
-		&& $("#chest").find(".name").val().toLowerCase().indexOf("void") != -1
-		&& $("#legs").find(".name").val().toLowerCase().indexOf("void") != -1
-		&& $("#hands").find(".name").val().toLowerCase().indexOf("void") != -1
-		) {v = 1.1;}
-	*/
-	
 	var bonus = $("#total").find(".str").val() || 0;
 	
 	var gear = 1;
@@ -711,25 +633,6 @@ function getMeleeMax() {
 	else if($("#checkSlay").is(':checked')) {
 		gear = 7/6;
 	}
-
-	/*
-	if($("#checkSlay").is(':checked')) {
-		if ($("#head").find(".name").val().toLowerCase().indexOf("slayer") != -1
-		 || $("#head").find(".name").val().toLowerCase().indexOf("black mask") != -1) {
-			gear = 7/6;
-		}
-	};
-	
-	
-	if($("#checkSalve").is(':checked')) {
-		if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet (e)") != -1) {
-			gear = 1.2;
-		}
-		else if ($("#neck").find(".name").val().toLowerCase().indexOf("salve amulet") != -1) {
-			gear = 7/6;
-		}
-	};
-	*/
 
 	var load = {visible, pStr, style, v, bonus, gear};
 	
@@ -745,15 +648,12 @@ function getMeleeMax() {
 }
 
 function getRangeMax() {
-	var baseRange = parseInt($("#baseRange").val());
+	var visible = parseInt($("#baseRange").val());
 	var potRange = $("#potRange option:selected").text();
-	var percentage = 0;
-	var constant = 0
+
 	if (potRange.indexOf("No Potion")) {
-		percentage = parseInt(potRange.substr(potRange.search(/([\d]+%)/)));
-		constant = parseInt(potRange.substr(potRange.search(/( [\d]+)/)));
+		visible = calculateVisible(visible, potRange);
 	}
-	var visible = Math.floor(baseRange + baseRange * percentage / 100) + constant;
 	
 	var p1 = $("#p1 option:selected").text();
 	var pStr = 1;
@@ -804,16 +704,13 @@ function getMagicMax() {
 		$("#spellMax").val(parseInt(spell.match(/([\d]+)/)));
 	}
 	
-	var baseMagic = parseInt($("#baseMagic").val());
+	var visible = parseInt($("#baseMagic").val());
 	var potMagic = $("#potMagic option:selected").text();
-	var percentage = 0;
-	var constant = 0
 
 	if (potMagic.indexOf("No Potion")) {
-		percentage = parseInt(potMagic.substr(potMagic.search(/([\d]+%)/)));
-		constant = parseInt(potMagic.substr(potMagic.search(/( [\d]+)/)));
+		visible = calculateVisible(visible, potMagic);
 	}
-	var visible = Math.floor(baseMagic + baseMagic * percentage / 100) + constant;
+	
 
 	var a = $("#spell option:selected").text();
 	if (!a.indexOf("Magic dart")) {
@@ -929,15 +826,7 @@ function getDefRoll(combat) {
 	
 	var load = {visible, pAcc, style, v, bonus, gear};
 
-	return $.ajax({
-        url: "\/calculate\/roll\/melee", 
-        method: "POST",
-        dataType: "json",
-		data: load
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-        alert( "Request failed: " + errorThrown );
-    });
+	return calculateRoll(load);
 }
 
 function getHitChance(A, B) {
