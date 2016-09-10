@@ -180,6 +180,19 @@ function ajaxStats($piece, url) {
 	}
 }
 
+function getPrayer(style) {
+	var ret = $.ajax({
+        url: "\/prayer\/" + style, 
+        method: "GET",
+        dataType: "json"
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert( "Request failed: " + errorThrown );
+    });
+	
+	return ret;
+}
+
 function pickMelee() {
 	emptyStyle();
 	$("#sim").off();
@@ -224,13 +237,7 @@ function pickMelee() {
 	$p1.append($o1);
 	$p2.append($o2);
 	
-	var style = "melee";
-	$.ajax({
-        url: "\/prayer\/" + style, 
-        method: "GET",
-        dataType: "json"
-    })
-    .done(function(jsondata){
+	getPrayer("melee").done(function(jsondata){
 		var data = jsondata.data;
 		for (i = 0; i < data.length; i++) {
 			var $option = $("<option>");
@@ -246,10 +253,8 @@ function pickMelee() {
 				$p2.append($option.clone());
 			}
 		}
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-        alert( "Request failed: " + errorThrown );
     });
+
 }
 
 function pickRange() {
@@ -282,13 +287,7 @@ function pickRange() {
 	var $o1 = $("<option>").text("No Prayer");
 	$p1.append($o1);
 	
-	var style = "range";
-	$.ajax({
-        url: "\/prayer\/" + style, 
-        method: "GET",
-        dataType: "json"
-    })
-    .done(function(jsondata){
+	getPrayer("range").done(function(jsondata){
 		var data = jsondata.data;
 		for (i = 0; i < data.length; i++) {
 			var $option = $("<option>");
@@ -296,11 +295,8 @@ function pickRange() {
 			$option.text(buff);
 			$p1.append($option);
 		}
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-        alert( "Request failed: " + errorThrown );
     });
-	
+
 }
 
 function pickMagic() {
@@ -356,13 +352,7 @@ function pickMagic() {
 	var $o1 = $("<option>").text("No Prayer");
 	$p1.append($o1);
 	
-	var style = "magic";
-	$.ajax({
-        url: "\/prayer\/" + style, 
-        method: "GET",
-        dataType: "json"
-    })
-    .done(function(jsondata){
+	getPrayer("magic").done(function(jsondata){
 		var data = jsondata.data;
 		for (i = 0; i < data.length; i++) {
 			var $option = $("<option>");
@@ -370,10 +360,8 @@ function pickMagic() {
 			$option.text(buff);
 			$p1.append($option);
 		}
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-        alert( "Request failed: " + errorThrown );
     });
+
 	
 }
 
@@ -484,19 +472,8 @@ function getMeleeAccuracy() {
 	else { alert("No style"); }
 	
 	
-	var v = 1;
-	if($("#checkVoid").is(':checked')) {
-		v = 1.1;
-	}
-	
-	var gear = 1;
-	
-	if($("#checkSalve").is(':checked')) {
-		gear = 1.2;
-	}
-	else if($("#checkSlay").is(':checked')) {
-		gear = 7/6;
-	}
+	var v = $("#checkVoid").is(':checked') ? 1.1 : 1;
+	var gear = $("#checkSalve").is(':checked') ? 1.2 : $("#checkSlay").is(':checked') ? 7/6 : 1;
 	
 	var bonus = 0;
 	if($("#radioStab").is(':checked')) { bonus = $("#total").find(".st").val() || "0"; }
@@ -531,19 +508,9 @@ function getRangeAccuracy() {
 	else { alert("No style"); }
 	
 	
-	var v = 1;
-	if($("#checkVoid").is(':checked')) {
-		v = 1.1;
-	}
-	
-	var gear = 1;
-	
-	if($("#checkSalve").is(':checked')) {
-		gear = 1.2;
-	}
-	else if($("#checkSlay").is(':checked')) {
-		gear = 1.15;
-	}
+	var v = $("#checkVoid").is(':checked') ? 1.1 : 1;
+	var gear = $("#checkSalve").is(':checked') ? 1.2 : $("#checkSlay").is(':checked') ? 1.15 : 1;
+
 	
 	var bonus = $("#total").find(".ra").val() || "0";
 	
@@ -574,19 +541,10 @@ function getMagicAccuracy() {
 		style = 3;
 	}
 	
-	var v = 1;
-	if($("#checkVoid").is(':checked')) {
-		v = 1.3;
-	}
 	
-	var gear = 1;
-	
-	if($("#checkSalve").is(':checked')) {
-		gear = 1.2;
-	}
-	else if($("#checkSlay").is(':checked')) {
-		gear = 1.15;
-	}
+	var v = $("#checkVoid").is(':checked') ? 1.3 : 1;
+	var gear = $("#checkSalve").is(':checked') ? 1.2 : $("#checkSlay").is(':checked') ? 1.15 : 1;
+
 	
 	var bonus = $("#total").find(".ma").val() || "0";
 	
@@ -618,21 +576,14 @@ function getMeleeMax() {
 	else if($("#radioStrength").is(':checked')) { style = 3; }
 	else { alert("No style"); }
 	
-	var v = 1;
-	if($("#checkVoid").is(':checked')) {
-		v = 1.1;
-	}
+	
+	var v = $("#checkVoid").is(':checked') ? 1.1 : 1;
+	var gear = $("#checkSalve").is(':checked') ? 1.2 : $("#checkSlay").is(':checked') ? 7/6 : 1;
+	
 	
 	var bonus = $("#total").find(".str").val() || 0;
 	
-	var gear = 1;
-	
-	if($("#checkSalve").is(':checked')) {
-		gear = 1.2;
-	}
-	else if($("#checkSlay").is(':checked')) {
-		gear = 7/6;
-	}
+
 
 	var load = {visible, pStr, style, v, bonus, gear};
 	
@@ -667,21 +618,12 @@ function getRangeMax() {
 	else if($("#radioLongrange").is(':checked')) { style = 0; }
 	else { alert("No style"); }
 	
-	var v = 1;
-	if($("#checkVoid").is(':checked')) {
-		v = 1.1;
-	}
+	var v = $("#checkVoid").is(':checked') ? 1.1 : 1;
+	var gear = $("#checkSalve").is(':checked') ? 1.2 : $("#checkSlay").is(':checked') ? 1.15 : 1;
 
 	var bonus = $("#total").find(".r").val() || 0;
 	
-	var gear = 1;
-	
-	if($("#checkSalve").is(':checked')) {
-		gear = 1.2;
-	}
-	else if($("#checkSlay").is(':checked')) {
-		gear = 1.15;
-	}
+
 
 	var load = {visible, pStr, style, v, bonus, gear};
 	
@@ -721,12 +663,10 @@ function getMagicMax() {
 	if (!b.indexOf("Trident")) {
 		$("#spellMax").val(Math.floor(visible / 3) - 5);
 	}
-	
-	if (!b.indexOf("Swamp Trident")) {
+	else if (!b.indexOf("Swamp Trident")) {
 		$("#spellMax").val(Math.floor(visible / 3) - 2);
 	}
-	
-	if (!b.indexOf("Black Salamander")) {
+	else if (!b.indexOf("Black Salamander")) {
 		$("#spellMax").val(Math.floor(0.5 + visible * (156/640)));
 	}
 	
