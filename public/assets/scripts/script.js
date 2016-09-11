@@ -903,3 +903,26 @@ function makeChart(hitCounts) {
 		}
 	});
 }
+
+function showDemo() {
+	$("#wep").find(".name").val("Abyssal whip").change();
+	$("#head").find(".name").val("Slayer helmet").change();
+	$("#cape").find(".name").val("Fire cape").change();
+	$("#neck").find(".name").val("Amulet of glory").change();
+	$("#chest").find(".name").val("Fighter torso").change();
+	$("#shield").find(".name").val("Dragon defender").change();
+	$("#legs").find(".name").val("Rune platelegs").change();
+	$("#hands").find(".name").val("Barrows gloves").change();
+	$("#feet").find(".name").val("Dragon boots").change();
+	$("#ring").find(".name").val("Berserker ring (i)").change();
+	
+	pickMelee();
+	$("#radioSlash").prop("checked", true);
+	$("#checkSlay").prop("checked", true);
+	$("#npcName").val("Gargoyle").change();
+	
+	var $span = $("<span>").html("Data entered, begin simulation at the last step");
+	$("#demo").append($span);
+	
+
+}
