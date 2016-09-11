@@ -6,28 +6,57 @@
 	text-align: center;
 }
 
-/*
-.equipLeftM {
-	padding-left: 8px;
-	border-left: 4px solid blue;
-}
-
-.equipRightM {
-	padding-right: 8px;
-	border-right: 4px solid blue;
-}
-
-.equipLeftR {
-	padding-left: 8px;
-	border-left: 4px solid green;
-}
-
-.equipRightR {
-	padding-right: 8px;
-	border-right: 4px solid green;
-}
-
 #equipment {
 	border-collapse: collapse;
+}
+
+.str, .st, .sl, .cr {
+	background-color: #ffeb99;
+}
+
+.m, .ma {
+	background-color: #b3ccff;
+}
+
+.r, .ra {
+	background-color: #9fff80;
+}
+
+#pickStyle button, #sim {
+	font-family: Arial;
+	color: #000000;
+	font-size: 33px;
+	padding: 10px 20px 10px 20px;
+	text-decoration: none;
+}
+
+#pickMelee {
+	background: #ffeb99;
+}
+
+#pickRange {
+	background-color: #9fff80;
+}
+
+#pickMagic {
+	background-color: #b3ccff;
+}
+
+#baseStats span {
+	display: block;
+}
+
+#baseStats select, #prayer select {
+	min-width: 200px;
+}
+
+
+
+
+
+/*
+section {
+	display: inline-block;
+	background-color: #e6fff5;
 }
 */

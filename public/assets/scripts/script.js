@@ -30,7 +30,7 @@ function loadEquipmentSlots() {
 
 function makeSlot(symbol, shortName, datalist, url) {
 	var $tr = $("<tr>").attr("id", shortName);
-	var $symbol = $("<td>").html(symbol);
+	var $symbol = $("<td>").append($("<img>").attr("src", "/assets/images/" + shortName + ".png"));
 	var $name = $("<td>").append($("<input>").attr({"class" : "name", "list" : datalist}));
 	var $ticks = $("<td>").append($('<input class="ticks" size="5">'));
 	if (shortName != "wep")
@@ -39,16 +39,18 @@ function makeSlot(symbol, shortName, datalist, url) {
 	var $st = $("<td>").append($('<input class="st" size="5">'));
 	var $sl = $("<td>").append($('<input class="sl" size="5">'));
 	var $cr = $("<td>").append($('<input class="cr" size="5">'));
-	var $m = $('<td class="equipLeftM">').append($('<input class="m" size="5">'));
-	var $ma = $('<td class="equipRightM">').append($('<input class="ma" size="5">'));
-	var $r = $('<td class="equipLeftR">').append($('<input class="r" size="5">'));
-	var $ra = $('<td class="equipRightR">').append($('<input class="ra" size="5">'));
+	var $mm = $('<td class="mm" />');
+	var $m = $('<td>').append($('<input class="m" size="5">'));
+	var $ma = $('<td>').append($('<input class="ma" size="5">'));
+	var $mr = $('<td class="mr" />');
+	var $r = $('<td>').append($('<input class="r" size="5">'));
+	var $ra = $('<td>').append($('<input class="ra" size="5">'));
 
 	$name.find(".name").change(function() {
 		ajaxStats($tr, url);
 	}); 
 	
-	$tr.append($symbol, $name, $ticks, $str, $st, $sl, $cr, $m, $ma, $r, $ra);
+	$tr.append($symbol, $name, $ticks, $str, $st, $sl, $cr, $mm, $m, $ma, $mr, $r, $ra);
 	$("#equipment").append($tr); //hardcoded table id
 }
 
@@ -61,12 +63,14 @@ function makeTotal() {
 	var $st = $("<td>").append($('<input class="st" size="5">'));
 	var $sl = $("<td>").append($('<input class="sl" size="5">'));
 	var $cr = $("<td>").append($('<input class="cr" size="5">'));
+	var $mm = $('<td class="mm" />');
 	var $m = $('<td class="equipLeftM">').append($('<input class="m" size="5">'));
 	var $ma = $('<td class="equipRightM">').append($('<input class="ma" size="5">'));
+	var $mr = $('<td class="mr" />');
 	var $r = $('<td class="equipLeftR">').append($('<input class="r" size="5">'));
 	var $ra = $('<td class="equipRightR">').append($('<input class="ra" size="5">'));
 	
-	$tr.append($symbol, $name, $ticks, $str, $st, $sl, $cr, $m, $ma, $r, $ra);
+	$tr.append($symbol, $name, $ticks, $str, $st, $sl, $cr, $mm, $m, $ma, $mr, $r, $ra);
 	$("#equipment").append($tr); //hardcoded table id
 	
 	updateTotal();
@@ -199,17 +203,17 @@ function pickMelee() {
 	$("#sim").click(simulateMelee);
 
 	var $base = $("#baseStats");
-	var $span1 = $("<span>").html("Atk: ");
+	var $span1 = $("<span>").html("Attack Level: ");
 	var $atk = $("<input>").attr("id", "baseAtk").val(99);
 	var $potAtk = $('<select id="potAtk" />');
-	var $span2 = $("<span>").html("Str: ");
+	var $span2 = $("<span>").html("Strength Level: ");
 	var $str = $("<input>").attr("id", "baseStr").val(99);
 	var $potStr = $('<select id="potStr" />');
 	getPotList("attack", $potAtk);
 	getPotList("strength", $potStr);
 	$base.append($span1, $atk, $potAtk, $("<br>"), $span2, $str, $potStr);
 	
-	var $span3 = $("<span>").html("AS");
+	var $span3 = $("<span>").html("Attack Style");
 	var $form = $("<form>");
 	var $span4 = $("<span>").html("Accurate");
 	var $radioAccurate = $('<input type="radio" name="as" id="radioAccurate" />').prop( "checked",true);
@@ -217,17 +221,19 @@ function pickMelee() {
 	var $radioStrength = $('<input type="radio" name="as" id="radioStrength" />');
 	var $span6 = $("<span>").html("Controlled");
 	var $radioControlled = $('<input type="radio" name="as" id="radioControlled" />');
-	$form.append($span4, $radioAccurate, $span5, $radioStrength, $span6, $radioControlled, $("<br>"));
-	var $span7 = $("<span>").html("St");
+	$form.append($radioAccurate, $span4, $("<br>"), $radioStrength, $span5, $("<br>"), $radioControlled, $span6, $("<br>"));
+	
+	
+	var $span7 = $("<span>").html("Stab");
 	var $radioStab = $('<input type="radio" name="st" id="radioStab" />').prop( "checked",true);
-	var $span8 = $("<span>").html("Sl");
+	var $span8 = $("<span>").html("Slash");
 	var $radioSlash = $('<input type="radio" name="st" id="radioSlash" />');
-	var $span9 = $("<span>").html("Cr");
+	var $span9 = $("<span>").html("Crush");
 	var $radioCrush = $('<input type="radio" name="st" id="radioCrush" />');
-	$form.append($span7, $radioStab, $span8, $radioSlash, $span9, $radioCrush, $("<br>"));
+	$form.append($("<br>"), $radioStab, $span7, $("<br>"), $radioSlash, $span8, $("<br>"), $radioCrush, $span9, $("<br>"));
 	$("#attackStyle").append($span3, $form);
 	
-	var $span10 = $("<span>").html("P");
+	var $span10 = $("<span>").html("Prayer");
 	var $p1 = $('<select id="p1" />');
 	var $p2 = $('<select id="p2" />');
 	$("#prayer").append($span10, $("<br>"), $p1, $("<br>"), $p2);
@@ -263,13 +269,13 @@ function pickRange() {
 	$("#sim").click(simulateRange);
 	
 	var $base = $("#baseStats");
-	var $span1 = $("<span>").html("Range: ");
+	var $span1 = $("<span>").html("Range Level: ");
 	var $range = $("<input>").attr("id", "baseRange").val(99);
 	var $potRange = $('<select id="potRange" />');
 	getPotList("range", $potRange);
 	$base.append($span1, $range, $potRange);
 	
-	var $span2 = $("<span>").html("AS");
+	var $span2 = $("<span>").html("Attack Style");
 	var $form = $("<form>");
 	var $span3 = $("<span>").html("Accurate");
 	var $radioAccurate = $('<input type="radio" name="as" id="radioAccurate" />').prop( "checked",true);
@@ -277,10 +283,10 @@ function pickRange() {
 	var $radioRapid = $('<input type="radio" name="as" id="radioRapid" />');
 	var $span5 = $("<span>").html("Longrange");
 	var $radioLongrange = $('<input type="radio" name="as" id="radioLongrange" />');
-	$form.append($span2, $("<br>"), $span3, $radioAccurate, $span4, $radioRapid, $span5, $radioLongrange, $("<br>"));
+	$form.append($span2, $("<br>"), $radioAccurate, $span3, $("<br>"), $radioRapid, $span4, $("<br>"), $radioLongrange, $span5, $("<br>"));
 	$("#attackStyle").append($form);
 	
-	var $span6 = $("<span>").html("P");
+	var $span6 = $("<span>").html("Prayer");
 	var $p1 = $('<select id="p1" />');
 	$("#prayer").append($span6, $("<br>"), $p1);
 	
@@ -305,7 +311,7 @@ function pickMagic() {
 	$("#sim").click(simulateMagic);
 	
 	var $base = $("#baseStats");
-	var $span1 = $("<span>").html("Magic: ");
+	var $span1 = $("<span>").html("Magic Level: ");
 	var $magic = $("<input>").attr("id", "baseMagic").val(99);
 	var $potMagic = $('<select id="potMagic" />');
 	getPotList("magic", $potMagic);
@@ -322,7 +328,7 @@ function pickMagic() {
 	$wepSpell.append($s1, $s2, $s3, $s4);
 	
 	var $maxHit = $('<input id="spellMax" size="5" />');
-	$("#attackStyle").append($span2, $spell, $wepSpell, $maxHit);
+	$("#attackStyle").append($span2, $("<br>"), $spell, $wepSpell, $maxHit);
 	
 	var $noSpell = $("<option>").text("Casted Spells");
 	$spell.append($noSpell);
@@ -345,7 +351,7 @@ function pickMagic() {
         alert( "Request failed: " + errorThrown );
     });
 	
-	var $span3 = $("<span>").html("P");
+	var $span3 = $("<span>").html("Prayer");
 	var $p1 = $('<select id="p1" />');
 	$("#prayer").append($span3, $("<br>"), $p1);
 	
@@ -582,8 +588,6 @@ function getMeleeMax() {
 	
 	
 	var bonus = $("#total").find(".str").val() || 0;
-	
-
 
 	var load = {visible, pStr, style, v, bonus, gear};
 	
