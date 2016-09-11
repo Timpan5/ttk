@@ -921,8 +921,6 @@ function showDemo() {
 	$("#checkSlay").prop("checked", true);
 	$("#npcName").val("Gargoyle").change();
 	
-	var $span = $("<span>").html("Data entered, begin simulation at the last step");
-	$("#demo").append($span);
-	
+	$("#demoResult").html("Data entered, begin simulation at the last step");
 
 }
