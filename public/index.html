@@ -11,8 +11,30 @@
 	
 	<body onload="loadLists()">
 	
-	<section>
+	<section id="instructions">
+		<h1> Oldschool Runescape Ticks to Kill Calculator </h1>
+		<section id="demo"> 
+			<h3> Example </h3>
+			<span> View a full example of the calculator </span> <br>
+			<button id="demoButton" onclick="showDemo()"> Show Example </button>
+		</section>
+		<section id="usage">
+			<h3> Instructions </h3>
+			<p> 
+				Complete the following three steps by entering relevant information. <br>
+				Inputs left blank are assumed to be unused and will not be used in calculations.
+			</p>
+		</section>
+	</section>
+	
+	<br>
+	
+	<section class="enclose">
 		<h2> Step 1: Enter Equipment Stats </h2>
+		<p> 
+			Enter equipment by name to retrieve stats, OR enter total bonuses on the last row. <br>
+		</p>
+		<br>
 		<table id="equipment">
 			<tr>
 				<th>Slot</th> <th>Name</th> <th>Hit Interval</th> <th>Str</th>   
@@ -25,7 +47,7 @@
 	
 	<br>
 	
-	<section id="pickStyle">
+	<section id="pickStyle" class="enclose">
 		<h2> Step 2: Select Combat Settings  </h2> 
 		<button id="pickMelee" onclick="pickMelee()"> Melee </button>
 		<button id="pickMagic" onclick="pickMagic()"> Magic </button>
@@ -33,8 +55,6 @@
 	</section>
 	
 	<br>
-	
-	<section id="styleIntro" class="pick"> </section>
 	
 	<br>
 	
@@ -50,7 +70,7 @@
 
 	<br>
 	
-	<section id="gear">
+	<section id="gear" class="enclose">
 		<form action="">
 			<input id="checkSlay" type="checkbox"> Slayer Helm / Black Mask </input> <br>
 			<input id="checkSalve" type="checkbox"> Salve Amulet </input> <br>
@@ -60,7 +80,7 @@
 	
 	<br>
 	
-	<section id="enemy">
+	<section id="enemy" class="enclose">
 		<h2> Step 3: Enter enemy stats </h2> 
 		<span> NPC Name </span> <input id="npcName" list="npcList" onchange="getNpcStats()"></input> <br>
 		
@@ -78,7 +98,7 @@
 	
 	<br>
 	
-	<section id="beginSim"> 
+	<section id="beginSim" class="enclose"> 
 		<h2> Simulation </h2>
 		<button id="sim"> Begin Simulation </button> 
 	</section>

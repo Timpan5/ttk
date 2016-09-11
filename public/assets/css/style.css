@@ -1,3 +1,12 @@
+body {
+	background-color: #e6f7ff;
+	padding-left: 10%;
+}
+
+h3 {
+	margin-bottom: 0px;
+}
+
 #rawData {
 	display: none;
 }
@@ -8,6 +17,15 @@
 
 #equipment {
 	border-collapse: collapse;
+}
+
+#instructions {
+	display: inline-block;
+	background-color: #baddf7;
+	border: 2px solid #1c90e5;
+	min-width: 50%;
+	padding: 2px;
+	margin: 4px;
 }
 
 .str, .st, .sl, .cr {
@@ -50,13 +68,20 @@
 	min-width: 200px;
 }
 
-
-
-
-
-/*
-section {
+#attackStyle form {
 	display: inline-block;
-	background-color: #e6fff5;
 }
-*/
+
+.enclose, .pick {
+	display: inline-block;
+	background-color: #ffffe6;
+	border: 2px solid #ffe6cc;
+	padding: 2px;
+	margin: 4px;
+}
+
+#simulation {
+	background-color: white;
+	border: 2px solid #00ff00;
+	padding: 4px;
+}

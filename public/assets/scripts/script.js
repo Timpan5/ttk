@@ -213,7 +213,7 @@ function pickMelee() {
 	getPotList("strength", $potStr);
 	$base.append($span1, $atk, $potAtk, $("<br>"), $span2, $str, $potStr);
 	
-	var $span3 = $("<span>").html("Attack Style");
+	var $span3 = $("<span>").html("");
 	var $form = $("<form>");
 	var $span4 = $("<span>").html("Accurate");
 	var $radioAccurate = $('<input type="radio" name="as" id="radioAccurate" />').prop( "checked",true);
@@ -223,15 +223,15 @@ function pickMelee() {
 	var $radioControlled = $('<input type="radio" name="as" id="radioControlled" />');
 	$form.append($radioAccurate, $span4, $("<br>"), $radioStrength, $span5, $("<br>"), $radioControlled, $span6, $("<br>"));
 	
-	
+	var $form1 = $("<form>");
 	var $span7 = $("<span>").html("Stab");
 	var $radioStab = $('<input type="radio" name="st" id="radioStab" />').prop( "checked",true);
 	var $span8 = $("<span>").html("Slash");
 	var $radioSlash = $('<input type="radio" name="st" id="radioSlash" />');
 	var $span9 = $("<span>").html("Crush");
 	var $radioCrush = $('<input type="radio" name="st" id="radioCrush" />');
-	$form.append($("<br>"), $radioStab, $span7, $("<br>"), $radioSlash, $span8, $("<br>"), $radioCrush, $span9, $("<br>"));
-	$("#attackStyle").append($span3, $form);
+	$form1.append($("<br>"), $radioStab, $span7, $("<br>"), $radioSlash, $span8, $("<br>"), $radioCrush, $span9, $("<br>"));
+	$("#attackStyle").append($span3, $form, $form1);
 	
 	var $span10 = $("<span>").html("Prayer");
 	var $p1 = $('<select id="p1" />');
