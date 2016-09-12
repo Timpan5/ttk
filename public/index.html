@@ -3,138 +3,145 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>TTK</title>
-		<link rel="stylesheet" href="assets/css/style.css" />
-		<script type="text/javascript" src="assets/scripts/jquery-2.2.4.min.js" defer></script>
-		<script type="text/javascript" src="assets/scripts/script.js" defer></script>
+		<link rel="stylesheet" href="assets/css/style.css" >
+		<script type="text/javascript" src="assets/scripts/jquery-2.2.4.min.js" defer ></script>
+		<script type="text/javascript" src="assets/scripts/script.js" defer ></script>
 		<script type="text/javascript" src="assets/scripts/Chart.js" defer></script>
 	</head>
 	
 	<body onload="loadLists()">
 	
-	<nav id="leftBar">
-		<span class="barButton"><a href="#instructions"> Instructions </a></span>
-		<span class="barButton"><a href="#equipTable"> Equipment </a></span>
-		<span class="barButton"><a href="#pickStyle"> Settings </a></span>
-		<span class="barButton"><a href="#enemy"> Enemy </a></span>
-		<span class="barButton"><a href="#beginSim"> Simulate </a></span>
-	</nav>
-	
-	<section id="title">
-		<span> <h2>2007</h2>  <img src="/assets/images/bluephat.png"/>  <h2>Scape</h2>  <span>
-		<br>
-		<h1> Oldschool Runescape Ticks to Kill Calculator </h1>
-	</section>
-	
-	<section id="content">
-	
-		<section id="instructions">
-			<section id="demo"> 
-				<h3> Example </h3>
-				<span> View a full example of the calculator </span> <br>
-				<button id="demoButton" onclick="showDemo()"> Show Example </button>
-				<span id="demoResult"> </span>
-			</section>
-			<section id="usage">
-				<h3> Instructions </h3>
-				<p> 
-					Complete the following three steps by entering relevant information. <br>
-					Inputs left blank are assumed to be unused and will not be used in calculations.
-				</p>
-			</section>
-			<section id="about">
-				<h3> About </h3>
-				<p> 
-					This calculator simulates 1000 iterations of combat in OSRS. <br>
-					The resulting graph displays the number of game ticks needed to end combat. <br>
-					Combat formulas used are either exact or the best known approximations.
-				</p>
-			</section>
-		</section>
+		<!-- Left navigation bar -->
+		<nav id="leftBar">
+			<span class="barButton"><a href="#instructions"> Instructions </a></span>
+			<span class="barButton"><a href="#equipTable"> Equipment </a></span>
+			<span class="barButton"><a href="#pickStyle"> Settings </a></span>
+			<span class="barButton"><a href="#enemy"> Enemy </a></span>
+			<span class="barButton"><a href="#beginSim"> Simulate </a></span>
+		</nav>
 		
-		<br>
-		
-		<section id = "equipTable" class="enclose">
-			<h2> Step 1: Enter Equipment Stats </h2>
-			<p> 
-				Enter equipment by name to retrieve stats, OR enter total bonuses on the last row. <br>
-			</p>
+		<!-- Main title -->
+		<section id="title">
+			<h2>2007</h2> <img src="/assets/images/bluephat.png" alt="hat" /> <h2>Scape</h2> 
 			<br>
-			<table id="equipment">
-				<tr>
-					<th>Slot</th> <th>Name</th> <th>Hit Interval</th> <th>Str</th>   
-					<th>Stab</th> <th>Slash</th> <th>Crush</th> <th></th>
-					<th class="equipLeftM">Magic Str</th> <th class="equipRightM">Magic</th> <th></th>
-					<th class="equipLeftR">Range Str</th> <th class="equipRightR">Range</th>
-				</tr>
-			</table>
+			<h1> Oldschool Runescape Ticks to Kill Calculator </h1>
 		</section>
 		
-		<br>
-		
-		<section id="pickStyle" class="enclose">
-			<h2> Step 2: Select Combat Settings  </h2> 
-			<button id="pickMelee" onclick="pickMelee()"> Melee </button>
-			<button id="pickMagic" onclick="pickMagic()"> Magic </button>
-			<button id="pickRange" onclick="pickRange()"> Range </button>
-		</section>
-		
-		<br>
-		
-		<br>
-		
-		<section id="baseStats" class="pick" > </section>
-		
-		<br>
-		
-		<section id="attackStyle" class="pick" > </section>
-		
-		<br>
-		
-		<section id="prayer" class="pick" > </section>
-
-		<br>
-		
-		<section id="gear" class="enclose">
-			<form action="">
-				<input id="checkSlay" type="checkbox"> Slayer Helm / Black Mask </input> <br>
-				<input id="checkSalve" type="checkbox"> Salve Amulet </input> <br>
-				<input id="checkVoid" type="checkbox"> Void Set </input> <br>
-			</form>
-		</section>
-		
-		<br>
-		
-		<section id="enemy" class="enclose">
-			<h2> Step 3: Enter enemy stats </h2> 
-			<span> NPC Name </span> <input id="npcName" list="npcList" onchange="getNpcStats()"></input> <br>
+		<section id="content">
+			<!-- Introduction and instructions -->
+			<section id="instructions">
+				<section id="demo"> 
+					<h3> Example </h3>
+					<span> View a full example of the calculator </span> <br>
+					<button id="demoButton" onclick="showDemo()"> Show Example </button>
+					<span id="demoResult"> </span>
+				</section>
+				<section id="usage">
+					<h3> Instructions </h3>
+					<p> 
+						Complete the following three steps by entering relevant information. <br>
+						Inputs left blank are assumed to be unused and will not be used in calculations.
+					</p>
+				</section>
+				<section id="about">
+					<h3> About </h3>
+					<p> 
+						This calculator simulates 1000 iterations of combat in OSRS. <br>
+						The resulting graph displays the number of game ticks needed to end combat. <br>
+						Combat formulas used are either exact or the best known approximations.
+					</p>
+				</section>
+			</section>
 			
-			<table id="npcStats">
-				<tr>
-					<th>HP</th> <th>Defence</th> <th>Base Magic</th> 
-					<th>Stab</th> <th>Slash</th> <th>Crush</th> <th>Magic</th> <th>Range</th>
-				</tr>
-				<tr>
-					<td><input id="npcHp" size="5"/></td> <td><input id="npcDef" size="5"/></td> <td><input id="npcM" size="5"/></td>
-					<td><input id="npcSt" size="5"/></td> <td><input id="npcSl" size="5"/></td> <td><input id="npcCr" size="5"/></td> <td><input id="npcMa" size="5"/></td> <td><input id="npcRa" size="5"/></td>
-				</tr>
-			</table>
+			<br>
+			
+			<!-- Table for entering equipment stats -->
+			<section id = "equipTable" class="enclose">
+				<h2> Step 1: Enter Equipment Stats </h2>
+				<p> 
+					Enter equipment by name to retrieve stats, OR enter total bonuses on the last row. <br>
+				</p>
+				<br>
+				<table id="equipment">
+					<tr>
+						<th>Slot</th> <th>Name</th> <th>Hit Interval</th> <th>Str</th>   
+						<th>Stab</th> <th>Slash</th> <th>Crush</th> <th></th>
+						<th class="equipLeftM">Magic Str</th> <th class="equipRightM">Magic</th> <th></th>
+						<th class="equipLeftR">Range Str</th> <th class="equipRightR">Range</th>
+					</tr>
+				</table>
+			</section>
+			
+			<br>
+			
+			<!-- Pick combat style -->
+			<section id="pickStyle" class="enclose">
+				<h2> Step 2: Select Combat Settings  </h2> 
+				<button id="pickMelee" onclick="pickMelee()"> Melee </button>
+				<button id="pickMagic" onclick="pickMagic()"> Magic </button>
+				<button id="pickRange" onclick="pickRange()"> Range </button>
+			</section>
+			
+			<br>
+			
+			<br>
+			
+			<section id="baseStats" class="pick" ></section>
+			
+			<br>
+			
+			<section id="attackStyle" class="pick" ></section>
+			
+			<br>
+			
+			<section id="prayer" class="pick" ></section>
+
+			<br>
+			
+			<section id="gear" class="enclose">
+				<form>
+					<input id="checkSlay" type="checkbox"> Slayer Helm / Black Mask <br>
+					<input id="checkSalve" type="checkbox"> Salve Amulet <br>
+					<input id="checkVoid" type="checkbox"> Void Set <br>
+				</form>
+			</section>
+			
+			<br>
+			
+			<!-- Pick enemy NPC -->
+			<section id="enemy" class="enclose">
+				<h2> Step 3: Enter enemy stats </h2> 
+				<span> NPC Name </span> <input id="npcName" list="npcList" onchange="getNpcStats()" /> <br>
+				<datalist id="npcList"> </datalist>
+				
+				<table id="npcStats">
+					<tr>
+						<th>HP</th> <th>Defence</th> <th>Base Magic</th> 
+						<th>Stab</th> <th>Slash</th> <th>Crush</th> <th>Magic</th> <th>Range</th>
+					</tr>
+					<tr>
+						<td><input id="npcHp" size="5"/></td> <td><input id="npcDef" size="5"/></td> <td><input id="npcM" size="5"/></td>
+						<td><input id="npcSt" size="5"/></td> <td><input id="npcSl" size="5"/></td> <td><input id="npcCr" size="5"/></td> <td><input id="npcMa" size="5"/></td> <td><input id="npcRa" size="5"/></td>
+					</tr>
+				</table>
+			</section>
+			
+			<br>
+			
+			<!-- Simulation button -->
+			<section id="beginSim" class="enclose"> 
+				<h2> Simulation </h2>
+				<button id="sim"> Begin Simulation </button> 
+			</section>
+			
+			<br>
+			
+			<!-- Simulation chart output -->
+			<section id="simulation">
+				<section id="avg" class="enclose"> </section>
+				<section id="graph"> </section>
+			</section>
 		</section>
-		
-		<br>
-		
-		<section id="beginSim" class="enclose"> 
-			<h2> Simulation </h2>
-			<button id="sim"> Begin Simulation </button> 
-		</section>
-		
-		<br>
-		
-		<section id="simulation">
-			<section id="avg" class="enclose"> </section>
-			<section id="graph"> </section>
-		</section>
-	
-	</section>
 		
 	</body>
 	

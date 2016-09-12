@@ -689,9 +689,7 @@ function getMagicMax() {
 }
 
 function loadNpcList() {
-	var $section = $("#enemy");
-	var $datalist = $('<datalist id="npcList"/>');
-	$section.append($datalist);
+	var $datalist = $("#npcList");
 	
 	$.ajax({
         url: "\/npc", 
