@@ -4,7 +4,7 @@
 * Equipment slots are generated using these constants.
 */
 const slotNames = [
-	["W", "wep", "wList", "wepMeleeList", "stats\/wep\/melee"],
+	["W", "wep", "wList", "weaponsList", "stats\/wep\/melee"],
 	["H", "head", "hList", "headList", "stats\/armor\/head"],
 	["C", "cape", "cList", "capeList", "stats\/armor\/cape"],
 	["N", "neck", "nList", "neckList", "stats\/armor\/neck"],

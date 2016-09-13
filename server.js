@@ -47,23 +47,6 @@ var server = app.listen(port, function () {
 });
 
 /* 
-* Table names.
-*/
-const dbTableName = {
-	"wepMelee" : "weapons_melee",
-	"head" : "head",
-	"cape" : "cape",
-	"neck" : "neck",
-	"ammo" : "ammo",
-	"chest" : "chest",
-	"shield" : "shield",
-	"legs" : "legs",
-	"hands" : "hands",
-	"feet" : "feet",
-	"ring" : "ring",
-};
-
-/* 
 * Send all table data to be used in datalist.
 * Or send data for specified table row.
 */
@@ -74,12 +57,12 @@ app.get(/(List)/, function (req, res) {
 	
 	if (end > 0 && item.length == 2) {
 		var target = base.substring(1,end);
-		sendList(res, getListQuery(dbTableName[target]));
+		sendList(res, getListQuery(target));
 	}
 	else if (end > 0 && item.length == 3) {
 		var target = base.substring(1,end);
 		var name = decodeURIComponent(item[2]);
-		sendStats(name, res, getItemQuery(dbTableName[target]));
+		sendStats(name, res, getItemQuery(target));
 	}
 	else {
 		res.status(400).send("List failed");
@@ -291,40 +274,6 @@ function sendStats(name, res, query) {
 }
 
 /**
-* Send NPC stats for a specified NPC.
-* @param {string} id - id of the NPC being scraped.
-* @param {string} title - Name of the NPC.
-* @param {string} page - URL of the page for this NPC.
- */
-function getNpcStats(id, title, page) {
-	rr({url : page}, function (error, res, body) {
-		if (!error && res.statusCode == 200) {
-			$ = cheerio.load(body);
-			$("table table").each(function() {
-				var row = $("tr", this).text();
-				if (row.indexOf("Combat info") != -1) {
-					var hp = row.match(/(Hitpoints)[\s]*[\d]*/g);
-					var maxHp = 0;
-					if (hp[0].match(/([\d]+)/) != null)
-						maxHp = hp[0].match(/([\d]+)/)[0];
-					
-					var base = row.match(/(Combat stats[\s\S]*Aggressive stats)/g);
-					var baseStats = base[0].match(/([^a-zA-Z \n]*)/g);
-					
-					var offense = row.match(/(Aggressive stats[\s\S]*Defensive stats)/g);
-					var offenseStats = offense[0].match(/([^a-zA-Z \n]*)/g);
-					
-					var defense = row.match(/(Defensive stats[\s\S]*Other bonuses)/g);
-					var defenseStats = defense[0].match(/([^a-zA-Z \n]*)/g);
-
-					pool.query('INSERT INTO npc VALUES ($1, $2, $3, $4, $5, $6)', [id, title, maxHp, npcStats(baseStats), npcStats(offenseStats), npcStats(defenseStats)], function(err) {});
-				}
-			});
-		};
-	});
-}
-
-/**
 * Parse NPC stats into individual integers.
 * @param {string} stats - Input string which will be parsed.
  */
@@ -437,6 +386,12 @@ function maxRoll(visible, prayer, stance, v, B, gear) {
 	return step3;
 }
 
+/**
+* Send item stats for a specified item.
+* @param {string} id - id of the NPC being scraped.
+* @param {string} title - Name of the NPC.
+* @param {string} page - URL of the page for this NPC.
+ */
 function getStats(id, title, page) {
 	rr({url : page}, function (error, res, body) {
 		if (!error && res.statusCode == 200) {
@@ -460,23 +415,47 @@ function getStats(id, title, page) {
 	});
 }
 
-	//Slot tables on wiki holds all items for slot
-	//create table head(id integer, name text, stats text[], speed integer, primary key(id));
-	//create table neck(id integer, name text, stats text[], speed integer, primary key(id));
-	//create table cape(id integer, name text, stats text[], speed integer, primary key(id));
-	//create table ammo(id integer, name text, stats text[], speed integer, primary key(id));
-	//create table chest(id integer, name text, stats text[], speed integer, primary key(id));
-	//create table shield(id integer, name text, stats text[], speed integer, primary key(id));
-	//create table legs(id integer, name text, stats text[], speed integer, primary key(id));
-	//create table hands(id integer, name text, stats text[], speed integer, primary key(id));
-	//create table feet(id integer, name text, stats text[], speed integer, primary key(id));
-	//create table ring(id integer, name text, stats text[], speed integer, primary key(id));
+/**
+* Send NPC stats for a specified NPC.
+* @param {string} id - id of the NPC being scraped.
+* @param {string} title - Name of the NPC.
+* @param {string} page - URL of the page for this NPC.
+ */
+function getNpcStats(id, title, page) {
+	rr({url : page}, function (error, res, body) {
+		if (!error && res.statusCode == 200) {
+			$ = cheerio.load(body);
+			$("table table").each(function() {
+				var row = $("tr", this).text();
+				if (row.indexOf("Combat info") != -1) {
+					var hp = row.match(/(Hitpoints)[\s]*[\d]*/g);
+					var maxHp = 0;
+					if (hp[0].match(/([\d]+)/) != null)
+						maxHp = hp[0].match(/([\d]+)/)[0];
+					
+					var base = row.match(/(Combat stats[\s\S]*Aggressive stats)/g);
+					var baseStats = base[0].match(/([^a-zA-Z \n]*)/g);
+					
+					var offense = row.match(/(Aggressive stats[\s\S]*Defensive stats)/g);
+					var offenseStats = offense[0].match(/([^a-zA-Z \n]*)/g);
+					
+					var defense = row.match(/(Defensive stats[\s\S]*Other bonuses)/g);
+					var defenseStats = defense[0].match(/([^a-zA-Z \n]*)/g);
 
+					pool.query('INSERT INTO npc VALUES ($1, $2, $3, $4, $5, $6)', [id, title, maxHp, npcStats(baseStats), npcStats(offenseStats), npcStats(defenseStats)], function(err) {});
+				}
+			});
+		};
+	});
+}
 	
-	/*
+/**
+* Find items by category to scrape.
+* Each item's stats are individually scraped and added to the database.
+ */
+function scrapeItems() {
 	rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Magic+weapons&limit=9999'}, function (error, res, body) {
 		if (!error && res.statusCode == 200) {
-			
 			var base = JSON.parse(body).basepath;
 			for (i = 0; i < (JSON.parse(body).items).length; i++) {
 				var page = base + (JSON.parse(body).items)[i]["url"];
@@ -487,16 +466,16 @@ function getStats(id, title, page) {
 			}
 		}
 	});
-	*/
-	
-	
-	
+}
 
-	/*
+/**
+* Find NPCs to scrape.
+* Each NPC's stats are individually scraped and added to the database.
+ */	
+function scrapeNPC() {
 		var myVar = setInterval(function() {
 		rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Bestiary&limit=999'}, function (error, res, body) {
 			if (!error && res.statusCode == 200) {
-				
 				var base = JSON.parse(body).basepath;
 				for (i = 0; i < (JSON.parse(body).items).length; i++) {
 					var page = base + (JSON.parse(body).items)[i]["url"];
@@ -504,9 +483,8 @@ function getStats(id, title, page) {
 					var title = (JSON.parse(body).items)[i]["title"];
 					
 					getNpcStats(id, title, page);
-
 				}
 			}
 		});
 	}, 150000);
-	*/
+}
