@@ -221,6 +221,9 @@ app.get("/spells", function(req, res) {
 	});
 });
 
+
+/* Client data request section */
+
 /**
 * Setup the query to use for searching a table.
 * @param {string} tableName - Name of the table to search.
@@ -289,6 +292,9 @@ function npcStats(stats) {
 	}
 	return stats;
 }
+
+
+/* Combat formula calculation section */
 
 /**
 * Calculate and return max hit with the given inputs.
@@ -386,6 +392,49 @@ function maxRoll(visible, prayer, stance, v, B, gear) {
 	return step3;
 }
 
+
+/* Scrape Web Content Section */
+
+/**
+* Find items by category to scrape.
+* Each item's stats are individually scraped and added to the database.
+ */
+function scrapeItems() {
+	rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Magic+weapons&limit=9999'}, function (error, res, body) {
+		if (!error && res.statusCode == 200) {
+			var base = JSON.parse(body).basepath;
+			for (i = 0; i < (JSON.parse(body).items).length; i++) {
+				var page = base + (JSON.parse(body).items)[i]["url"];
+				var id = (JSON.parse(body).items)[i]["id"];
+				var title = (JSON.parse(body).items)[i]["title"];
+				
+				getStats(id, title, page); //hardcoded table name
+			}
+		}
+	});
+}
+
+/**
+* Find NPCs to scrape.
+* Each NPC's stats are individually scraped and added to the database.
+ */	
+function scrapeNPC() {
+		var myVar = setInterval(function() {
+		rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Bestiary&limit=999'}, function (error, res, body) {
+			if (!error && res.statusCode == 200) {
+				var base = JSON.parse(body).basepath;
+				for (i = 0; i < (JSON.parse(body).items).length; i++) {
+					var page = base + (JSON.parse(body).items)[i]["url"];
+					var id = (JSON.parse(body).items)[i]["id"];
+					var title = (JSON.parse(body).items)[i]["title"];
+					
+					getNpcStats(id, title, page);
+				}
+			}
+		});
+	}, 150000);
+}
+
 /**
 * Send item stats for a specified item.
 * @param {string} id - id of the NPC being scraped.
@@ -447,44 +496,4 @@ function getNpcStats(id, title, page) {
 			});
 		};
 	});
-}
-	
-/**
-* Find items by category to scrape.
-* Each item's stats are individually scraped and added to the database.
- */
-function scrapeItems() {
-	rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Magic+weapons&limit=9999'}, function (error, res, body) {
-		if (!error && res.statusCode == 200) {
-			var base = JSON.parse(body).basepath;
-			for (i = 0; i < (JSON.parse(body).items).length; i++) {
-				var page = base + (JSON.parse(body).items)[i]["url"];
-				var id = (JSON.parse(body).items)[i]["id"];
-				var title = (JSON.parse(body).items)[i]["title"];
-				
-				getStats(id, title, page); //hardcoded table name
-			}
-		}
-	});
-}
-
-/**
-* Find NPCs to scrape.
-* Each NPC's stats are individually scraped and added to the database.
- */	
-function scrapeNPC() {
-		var myVar = setInterval(function() {
-		rr({url : 'http://2007.runescape.wikia.com/api/v1/Articles/List?category=Bestiary&limit=999'}, function (error, res, body) {
-			if (!error && res.statusCode == 200) {
-				var base = JSON.parse(body).basepath;
-				for (i = 0; i < (JSON.parse(body).items).length; i++) {
-					var page = base + (JSON.parse(body).items)[i]["url"];
-					var id = (JSON.parse(body).items)[i]["id"];
-					var title = (JSON.parse(body).items)[i]["title"];
-					
-					getNpcStats(id, title, page);
-				}
-			}
-		});
-	}, 150000);
 }
