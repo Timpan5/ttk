@@ -5,12 +5,12 @@ Oldschool Runescape Combat Simulator
 ## Use
 
 The live website and demo example can be found at 
-https://rs-ttk.herokuapp.com
+https://rs-ttk.herokuapp.com.
 
 ## About
 
 This project is a calculator for one of the most popular 
-MMORPG games, Oldschool Runescape(http://oldschool.runescape.com/).
+MMORPG games, Oldschool Runescape(http://oldschool.runescape.com).
 
 This game involves combat, which can be simulated with extreme accuracy.
 The requirement for accurate simulation is entering combat statistics, 
@@ -26,13 +26,13 @@ such as weapons and armor, to decide which setup is the most effective.
 
 Postgre SQL database contains the data used as inputs the to
 the calculations. Since this data is not available
-from the game's developers, it was scraped from a community wiki
-page. Once the webpages were scraped their contents were parsed
+from the game's developers, it was scraped from community wiki
+pages. Over 2,000 webpages were scraped and their contents were parsed
 for the necessary information and added to the database. 
 
 ### Frontend HTML
 
-The frontend website allows users to enter and review data.
+The frontend website allows users to enter and view data.
 Aside from the static inputs, jQuery is used to create many
 dynamic elements and almost all elements rely on jQuery to 
 process or display information clientside. 
@@ -42,7 +42,7 @@ process or display information clientside.
 The primary purpose of the frontend jQuery is to pass information
 between the server and client. Clients may make search queries that 
 require database access, which will be handled by the server.
-Inputs have change() functions that automatically handle requests
+Inputs have `change()` functions that automatically handle requests
 without extra client input. 
 Once the server returns the data in JSON form, it will be processed and 
 displayed on the frontend. Certain key calculations are also made
