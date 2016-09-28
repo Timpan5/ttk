@@ -38,6 +38,21 @@ app.use(bodyParser.urlencoded({
 })); 
 app.use(express.static(path.join(__dirname, "public")));
 
+/*
+* Setup smtp to send emails.
+* Set config settings and setup transporter.
+*/
+var smtpConfig = {
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'rsttk.mailer@gmail.com',
+        pass: 'x@N9@FvJ(v-y#m^"'
+	}
+};
+var transporter = nodemailer.createTransport(smtpConfig);
+
 /* 
 * Define port for server to listen on.
 * Port is obtained from env variable when possible.
@@ -229,9 +244,22 @@ app.post("/email", function (req, res) {
 	var input = req.body;
 	var msg = input.msg;
 	
-	res.status(200).send({});
+	var mailOptions = {
+		from: '"rsttk" <rsttk.mailer@gmail.com>', 
+		to: 'rsttk.mailer@gmail.com', 
+		subject: 'RSTTK',
+		text: msg, 
+	};
+	
+	transporter.sendMail(mailOptions, function(error, info){
+		if(error){
+			res.status(400).end();
+		}
+		else {
+			res.status(200).send({});
+		}
+	});
 });
-
 
 /* Client data request section */
 
