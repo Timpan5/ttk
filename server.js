@@ -47,8 +47,8 @@ var smtpConfig = {
     port: 465,
     secure: true,
     auth: {
-        user: 'rsttk.mailer@gmail.com',
-        pass: 'x@N9@FvJ(v-y#m^"'
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
 	}
 };
 var transporter = nodemailer.createTransport(smtpConfig);
