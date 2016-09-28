@@ -36,6 +36,7 @@ h3 {
 */
 
 #leftBar {
+	margin-left: 0;
 	float:left;
 	position: fixed;
 	padding-top: 50px;
