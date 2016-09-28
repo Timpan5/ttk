@@ -7,8 +7,9 @@ var bodyParser = require("body-parser");
 var path = require("path");
 var pg = require("pg");
 var cheerio = require("cheerio");
-var cheerioTableparser = require('cheerio-tableparser');
+var cheerioTableparser = require("cheerio-tableparser");
 var rr = require("request");
+var nodemailer = require("nodemailer");
 
 /* 
 * Connect to PSQL database and establish client pool.
@@ -219,6 +220,16 @@ app.get("/spells", function(req, res) {
 			res.send(jsonObj);
 		}
 	});
+});
+
+/*
+* Send client's message as email.
+*/
+app.post("/email", function (req, res) {
+	var input = req.body;
+	var msg = input.msg;
+	
+	res.status(200).send({});
 });
 
 

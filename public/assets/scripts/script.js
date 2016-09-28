@@ -1052,3 +1052,32 @@ function showDemo() {
 	$("#npcName").val("Gargoyle").change();
 	$("#demoResult").html("Data entered, begin simulation at the last step");
 }
+
+/**
+ * Button to send email message. The contents of the text area are
+ * send to the server which will then send it as an email.
+ */
+ $("#sendMsg").click(function() {
+	var msg = $("#cMsg").val();
+	var load = {msg};
+	
+	$.ajax({
+        url: "\/email", 
+        method: "POST",
+        dataType: "json",
+		data: load
+    })
+	.done(function(jsondata){
+		$("#msg-result").append($("<h4> Message Sent </h4>"));
+	})
+    .fail(function(jqXHR, textStatus, errorThrown){
+        $("#msg-result").append($("<h4> Server Error, try again later </h4>"));
+    });
+ });
+
+/**
+ * Button to switch back to index.html.
+ */
+ $("#back").click(function() {
+	location.href="index.html";
+ });
